@@ -27,6 +27,16 @@ class Stop(NamedTuple):
     arrival_time: tuple[int, int, int]
     departure_time: tuple[int, int, int]
 
+# class StopTime(NamedTuple):
+#     arrival_time: tuple[int, int, int]
+#     departure_time: tuple[int, int, int]
+
+# type Trip = list[StopTime]
+
+# class Route(NamedTuple):
+#     stops: list[Stop]
+#     trips: list[Trip]
+
 
 def convert_trips():
     print('Converting trips...')
@@ -75,8 +85,6 @@ def convert_trips():
                 f'are not in the correct order in trip {row.trip_id}'
             )
 
-    # print(stop_times_by_trip)
-
     print(f'Processing trips ({len(trips_csv.index)} rows)...')
 
     trips_by_route = defaultdict(list)
@@ -84,6 +92,18 @@ def convert_trips():
     for row in trips_csv.itertuples(index=False):
         assert row.trip_id in stop_times_by_trip, f"Trip {row.trip_id} has no stop times"
         trips_by_route[row.route_id].append(stop_times_by_trip[row.trip_id])
+
+    print('Total amount of routes:', len(trips_by_route))
+
+    # Checking
+    # for route_name, route in trips_by_route.items():
+    #     intial_trip_stop_ids = tuple(stop.id for stop in route[0])
+    #     for trip in route:
+    #         cur_trip_stop_ids = tuple(stop.id for stop in trip)
+    #         assert cur_trip_stop_ids == intial_trip_stop_ids, (
+    #             f'Trip {cur_trip_stop_ids} does not match the initial trip {intial_trip_stop_ids}'
+    #             f' for route {route_name}'
+    #         )
 
     print('Writing result...')
 

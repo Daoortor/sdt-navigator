@@ -62,8 +62,8 @@ def convert_stations():
 
     print('Writing result...')
 
-    dump_json(stations, mkpath(DATA_PATH, 'stations.json'))
-    dump_json(stations_id_map, mkpath(DATA_PATH, '_stations_map.json'))
+    dump_json(stations, mkpath(DATA_PATH, 'stations.json'), indent_depth=1)
+    dump_json(stations_id_map, mkpath(DATA_PATH, 'stations_map.json'))
 
 
 if __name__ == '__main__':
