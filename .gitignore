@@ -36,3 +36,9 @@ __pycache__/
 
 # Archives
 *.zip
+
+# JetBrains
+/.idea/
+
+# CMake
+cmake-build-debug/
