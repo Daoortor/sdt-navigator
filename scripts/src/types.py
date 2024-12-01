@@ -1,9 +1,10 @@
 from typing import NamedTuple
+from typing import NewType
 
 
 class Station(NamedTuple):
-    id: str
     name: str
+    id: str
     lat: float
     lon: float
 
@@ -18,7 +19,7 @@ class Stop(NamedTuple):
     time: StopTime
 
 
-type Trip = list[StopTime]
+Trip = NewType('Trip', list[StopTime])
 
 
 class Route(NamedTuple):
