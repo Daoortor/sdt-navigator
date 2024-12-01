@@ -94,6 +94,7 @@ def convert_trips():
         trips_by_route[row.route_id].append(stop_times_by_trip[row.trip_id])
 
     print('Total amount of routes:', len(trips_by_route))
+    print('Average amount of trips per route:', round(sum(len(trips) for trips in trips_by_route.values()) / len(trips_by_route)))
 
     # Checking
     # for route_name, route in trips_by_route.items():
