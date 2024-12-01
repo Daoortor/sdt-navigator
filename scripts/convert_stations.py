@@ -61,7 +61,6 @@ def convert_stations():
     print('Total amount of stations:', len(stations_by_name))
 
     print('Writing result...')
-
     dump_json(stations, mkpath(DATA_PATH, 'stations.json'), indent_depth=1)
     dump_json(stations_id_map, mkpath(DATA_PATH, 'stations_map.json'))
 
