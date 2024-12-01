@@ -31,10 +31,10 @@ def convert_trips():
     assert os.path.isfile(mkpath(DATA_PATH, 'stations.json')), 'Run convert_stations.py first'
     assert os.path.isfile(mkpath(DATA_PATH, 'stations_map.json')), 'Run convert_stations.py first'
 
-    with open(mkpath(DATA_PATH, 'stations.json'), 'r') as file:
+    with open(mkpath(DATA_PATH, 'stations.json'), 'r', encoding='utf-8') as file:
         stations_by_id = {station.id: station for station in map(Station._make, json.load(file))}
 
-    with open(mkpath(DATA_PATH, 'stations_map.json'), 'r') as file:
+    with open(mkpath(DATA_PATH, 'stations_map.json'), 'r', encoding='utf-8') as file:
         stations_by_id.update(
             (map_from, stations_by_id[map_to])
             for map_from, map_to in json.load(file).items()

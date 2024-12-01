@@ -7,9 +7,9 @@ def mkpath(*paths: str) -> str:
     return os.path.normpath(os.path.join(*paths))
 
 
-def load_json(path: str) -> dict | list:
-    with open(path, 'r', encoding='utf-8') as file:
-        return json.load(file)
+# def load_json(path: str) -> dict | list:
+#     with open(path, 'r', encoding='utf-8') as file:
+#         return json.load(file)
 
 
 def cursom_json_decoder(obj, indent_depth=0, current_indent=0):
