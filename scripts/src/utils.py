@@ -1,6 +1,8 @@
-from io import StringIO
+from typing import TextIO
 import json
 import os
+
+import orjson
 
 
 def mkpath(*paths: str) -> str:
@@ -12,32 +14,42 @@ def mkpath(*paths: str) -> str:
 #         return json.load(file)
 
 
-def cursom_json_decoder(obj, indent_depth=0, current_indent=0):
+def _orjson_default(obj):
+    if isinstance(obj, tuple):
+        return list(obj)
+    return str(obj)
+
+
+def cursom_json_decoder(result: TextIO, obj, indent_depth=0, current_indent=0) -> str:
     if indent_depth == 0:
-        return json.dumps(obj, ensure_ascii=False)
+        result.write(json.dumps(obj, ensure_ascii=False))
+        return
 
     current_indent += 1
 
     if isinstance(obj, dict):
-        result = StringIO()
         result.write('{\n')
         for key, value in obj.items():
-            result.write(f'{"\t" * current_indent}{json.dumps(key, ensure_ascii=False)}: ')
-            result.write(cursom_json_decoder(value, indent_depth - 1, current_indent))
+            result.write('\t' * current_indent)
+            result.write(json.dumps(key, ensure_ascii=False))
+            result.write(': ')
+            cursom_json_decoder(result, value, indent_depth - 1, current_indent)
             result.write(',\n')
-        result.write(f'{"\t" * (current_indent - 1)}}}')
-        return result.getvalue()
+        result.write('\t' * (current_indent - 1))
+        result.write('}')
+        return
 
     if isinstance(obj, list | tuple):
-        result = StringIO()
         result.write('[\n')
         for value in obj:
-            result.write(f'{"\t" * current_indent}{cursom_json_decoder(value, indent_depth - 1, current_indent)}')
+            result.write('\t' * current_indent)
+            cursom_json_decoder(result, value, indent_depth - 1, current_indent)
             result.write(',\n')
-        result.write(f'{"\t" * (current_indent - 1)}]')
-        return result.getvalue()
+        result.write('\t' * (current_indent - 1))
+        result.write(']')
+        return
 
-    return json.dumps(obj, ensure_ascii=False)
+    result.write(json.dumps(obj, ensure_ascii=False))
 
 
 def dump_json(data, path: str, indent_depth=float('inf')):
@@ -45,14 +57,14 @@ def dump_json(data, path: str, indent_depth=float('inf')):
     filename_pretty = os.path.splitext(filename)[0] + '.pretty.json'
 
     # print('Writing compressed file...')
-    with open(path, 'w', encoding='utf-8') as file:
-        json.dump(data, file, ensure_ascii=False, separators=(',', ':'))
+    with open(path, 'wb') as file:
+        file.write(orjson.dumps(data, default=_orjson_default))
         # file.write(cursom_json_decoder(data, indent_depth))
 
     # print('Writing pretty file...')
     with open(mkpath(os.path.dirname(path), filename_pretty), 'w', encoding='utf-8') as file:
         # json.dump(data, file, ensure_ascii=False, indent='\t')
-        file.write(cursom_json_decoder(data, indent_depth))
+        cursom_json_decoder(file, data, indent_depth)
 
 
 if __name__ == '__main__':  # Tests

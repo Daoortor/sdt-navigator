@@ -1,8 +1,7 @@
 from collections import defaultdict
-
-import json
 import os
 
+import simdjson as json
 import pandas as pd
 
 from src.types import Station, StopTime, Stop, Trip, Route

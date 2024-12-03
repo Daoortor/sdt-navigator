@@ -39,7 +39,7 @@ def convert_stations():
             stations_id_map[row.stop_id] = row.parent_station
             continue
 
-        assert row.stop_name not in stations_by_name, f"Stop name {row.stop_name} already exists"
+        assert row.stop_name not in stations_by_name, f'Stop name {row.stop_name} already exists'
 
         stations_by_name[row.stop_name] = Station(
             row.stop_name,
