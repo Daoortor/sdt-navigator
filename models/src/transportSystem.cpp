@@ -22,11 +22,20 @@ bool TransportSystem::isValid() const {
         return transfer.start >= &*stops.begin() && transfer.start < &*stops.end() &&
             transfer.end >= &*stops.begin() && transfer.end < &*stops.end();
     });
-    bool stopRoutesAreValid = std::ranges::all_of(stopRoutes.begin(), stopRoutes.end(), [&](const Route *stopRoute) {
+    bool stopRoutesAreValid = std::ranges::all_of(stopRoutes.begin(), stopRoutes.end(), [&](const std::pair<Route *, Stop **> &entry) {
+        Route *stopRoute = entry.first;
         return stopRoute >= &*routes.begin() && stopRoute < &*routes.end();
     });
     return routesAreValid && routeStopsAreValid && stopsAreValid && transfersAreValid && stopRoutesAreValid;
 }
 
+const Stop *TransportSystem::getStop(const QString &stopId) const {
+    for (auto &stop : stops) {
+        if (stop.id == stopId) {
+            return &stop;
+        }
+    }
+    return nullptr;
+}
 
 }

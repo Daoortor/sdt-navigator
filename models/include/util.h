@@ -21,7 +21,8 @@ struct Stop {
     QString name;
     QString id;
     Transfer *transfers; // pointer to TransportSystem.transfers[i]; &*transfers.end() if none
-    Route **routes; // pointer to TransportSystem.stopRoutes[i]
+    std::pair<Route *, Stop **> *routes; // pointer to TransportSystem.stopRoutes[i]
+    int routeCount;
 };
 
 struct Route {
