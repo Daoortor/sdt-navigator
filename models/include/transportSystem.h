@@ -16,7 +16,7 @@ struct TransportSystem {
     std::vector<std::pair<Route *, Stop **>> stopRoutes; // Routes passing through each stop, each together with corresponding routeStops entry
 
     TransportSystem() = default;
-    // Construct a transport system from data (.json or .csv? @npanuhin?)
+    // Construct a transport system from JSON data
     explicit TransportSystem(const QDir &sourceDir);
     // Check if all pointers point inside corresponding containers
     [[nodiscard]] bool isValid() const;

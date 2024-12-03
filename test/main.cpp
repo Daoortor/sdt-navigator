@@ -1,5 +1,5 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#include "doctest.h"
+#include "../lib/doctest.h"
 
 #include "test-data/minsk-subway.h"
 #include "../core/include/pathfinder.h"
@@ -36,6 +36,13 @@ TEST_CASE("Minsk subway") {
         assert(std::holds_alternative<Ride>(j[0]));
         assert(std::holds_alternative<Transfer>(j[1]));
         assert(std::holds_alternative<Ride>(j[2]));
+    }
+}
+
+TEST_CASE("Hamburg") {
+    TransportSystem hamburg(QDir(PROJECT_ROOT_PATH "/data/gtfs_hamburg"));
+    SUBCASE("isValid") {
+        assert(hamburg.isValid());
     }
 }
 

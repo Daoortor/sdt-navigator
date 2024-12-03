@@ -1,9 +1,21 @@
 #include "../include/transportSystem.h"
 
+#include <iostream>
+
+#include "../../lib/simdjson.h"
+
+using namespace std;
+using namespace simdjson;
+
 namespace sdtmaps {
 
 TransportSystem::TransportSystem(const QDir &sourceDir) {
+    cout << "Loading transport system from " << sourceDir.absolutePath().toStdString() << endl;
     // TODO(data loader by @npanukhin)
+    // ondemand::parser parser;
+    // padded_string json = padded_string::load("twitter.json");
+    // ondemand::document tweets = parser.iterate(json);
+    // std::cout << uint64_t(tweets["search_metadata"]["count"]) << " results." << std::endl;
 }
 
 bool TransportSystem::isValid() const {
