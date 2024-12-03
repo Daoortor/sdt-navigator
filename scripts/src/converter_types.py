@@ -1,5 +1,4 @@
-from typing import NamedTuple
-from typing import NewType
+from typing import NamedTuple, NewType
 
 
 class Station(NamedTuple):
@@ -25,3 +24,9 @@ Trip = NewType('Trip', list[StopTime])
 class Route(NamedTuple):
     stations: list[Station]
     trips: list[Trip]
+
+
+class Transfer(NamedTuple):
+    start_id: Station.id
+    end_id: Station.id
+    time: int

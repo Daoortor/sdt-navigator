@@ -1,6 +1,6 @@
 import pandas as pd
 
-from src.types import Station
+from src.converter_types import Station
 from src.utils import mkpath, dump_json
 
 
@@ -24,7 +24,8 @@ def convert_stations():
         mkpath(RAW_DATA_PATH, 'stops.csv'),
         keep_default_na=False,
         usecols=tuple(STATIONS_COLUMNS.keys()),
-        dtype=STATIONS_COLUMNS
+        dtype=STATIONS_COLUMNS,
+        na_filter=False
     )
 
     print(f'Processing stops ({len(stops_csv.index)} rows)...')

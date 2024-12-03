@@ -4,7 +4,7 @@ import os
 import simdjson as json
 import pandas as pd
 
-from src.types import Station, StopTime, Stop, Trip, Route
+from src.converter_types import Station, StopTime, Stop, Trip, Route
 from src.utils import mkpath, dump_json
 
 
@@ -44,14 +44,13 @@ def convert_trips():
         mkpath(RAW_DATA_PATH, 'stop_times.csv'),
         keep_default_na=False,
         usecols=tuple(STOP_TIMES_COLUMNS.keys()),
-        dtype=STOP_TIMES_COLUMNS
+        dtype=STOP_TIMES_COLUMNS,
+        na_filter=False
     )
-
-    print(f'Processing stop times ({len(stop_times_csv.index)} rows)...')
 
     stops_for_trip: dict[str, list[tuple[int, Stop]]] = defaultdict(list)
 
-    print('Parsing stop times...')
+    print(f'Parsing stop times ({len(stop_times_csv.index)} rows)...')
     for row in stop_times_csv.itertuples(index=False):
         assert row.stop_id in stations_by_id, f'Stop {row.stop_id} not found'
         stops_for_trip[row.trip_id].append((
@@ -92,15 +91,17 @@ def convert_trips():
     similar_trips: Route = []
 
     for stations, trip_ids in similar_trips_dict.items():
-        similar_trips.append(Route(
-            stations=stations,
-            trips=[
-                Trip([
-                    stop.time
-                    for stop in stops_for_trip[trip_id]
-                ]) for trip_id in trip_ids
-            ]
-        ))
+        similar_trips.append(
+            Route(
+                stations=stations,
+                trips=[
+                    Trip([
+                        stop.time
+                        for stop in stops_for_trip[trip_id]
+                    ]) for trip_id in trip_ids
+                ]
+            )
+        )
 
     print('Total amount of routes:', len(similar_trips))
     print('Average amount of trips per route:', round(
