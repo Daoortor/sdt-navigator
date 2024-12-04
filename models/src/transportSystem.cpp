@@ -2,20 +2,58 @@
 
 #include <iostream>
 
-#include "../../lib/simdjson.h"
+#include "rapidjson/document.h"
 
 using namespace std;
-using namespace simdjson;
+using namespace rapidjson;
 
 namespace sdtmaps {
 
+namespace details {
+
+Document parseJsonFile(const QString &filename) {
+    QFile file(filename);
+    if (!file.open(QIODevice::ReadOnly)) {
+        throw std::runtime_error("Failed to open " + filename.toStdString());
+    }
+    QString json = file.readAll();
+    file.close();
+
+    Document document;
+    document.Parse(json.toUtf8().constData());
+    if (document.HasParseError()) {
+        throw std::runtime_error("Failed to parse " + filename.toStdString());
+    }
+
+    return document;
+}
+
+}
+
 TransportSystem::TransportSystem(const QDir &sourceDir) {
-    cout << "Loading transport system from " << sourceDir.absolutePath().toStdString() << endl;
-    // TODO(data loader by @npanukhin)
-    // ondemand::parser parser;
-    // padded_string json = padded_string::load("twitter.json");
-    // ondemand::document tweets = parser.iterate(json);
-    // std::cout << uint64_t(tweets["search_metadata"]["count"]) << " results." << std::endl;
+    std::cout << "Loading transport system from " << sourceDir.absolutePath().toStdString() << std::endl;
+
+    auto json_stations = details::parseJsonFile(sourceDir.filePath("stations.json"));
+    auto json_transfers = details::parseJsonFile(sourceDir.filePath("transfers.json"));
+    auto json_trips = details::parseJsonFile(sourceDir.filePath("trips.json"));
+
+    for (auto &stopData : json_stations.GetArray()) {
+        Stop stop;
+        stop.name = QString::fromUtf8(stopData[0].GetString());
+        stop.id = QString::fromUtf8(stopData[1].GetString());
+        stops.push_back(stop);
+    }
+    cout << "Loaded " << json_stations.Size() << " stops" << endl;
+    
+    // for (auto &transferData : json_transfers.GetArray()) {
+    //     Transfer transfer(
+    //         &stops[transferData[0].GetInt()],
+    //         &stops[transferData[1].GetInt()],
+    //         transferData[2].GetInt()
+    //     );
+    //     transfers.push_back(transfer);
+    // }
+    // cout << "Loaded " << json_transfers.Size() << " transfers" << endl;
 }
 
 bool TransportSystem::isValid() const {
