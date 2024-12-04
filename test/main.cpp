@@ -12,20 +12,26 @@ TEST_CASE("Minsk subway") {
         assert(minskSubway.isValid());
     }
 
-    // SUBCASE("Trivial journey") {
-    //     std::optional<Journey> j_ = pathfind(minskSubway, "113", "113", QTime(3, 30));
-    //     assert(j_.has_value());
-    //     Journey &j = j_.value();
-    //     assert(j.empty());
-    // }
+    SUBCASE("Trivial journey") {
+        std::optional<Journey> j_ = pathfind(minskSubway, "113", "113",
+            QDateTime(minskSubwayDate, QTime(3, 30)));
+        assert(j_.has_value());
+        Journey &j = j_.value();
+        assert(j.empty());
+    }
 
     SUBCASE("Simple journey") {
-        std::optional<Journey> j_ = pathfind(minskSubway, "113", "114",
-            QDateTime(minskSubwayDate, QTime(3, 30)));
+        QString startId = "113";
+        QString endId = "114";
+        QDateTime startDateTime = QDateTime(minskSubwayDate, QTime(3, 30));
+        std::optional<Journey> j_ = pathfind(minskSubway, startId, endId, startDateTime);
         assert(j_.has_value());
         Journey &j = j_.value();
         assert(j.size() == 1);
         assert(std::holds_alternative<Ride>(j[0]));
+        assert((*std::get<Ride>(j[0]).firstStop)->id == startId);
+        assert((*std::get<Ride>(j[0]).lastStop)->id == endId);
+        assert(std::get<Ride>(j[0]).firstStopTime->arrivalTime == QDateTime(minskSubwayDate, QTime(4, 00)));
     }
 
     SUBCASE("One change") {
