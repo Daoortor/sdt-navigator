@@ -2,12 +2,21 @@
 #define ROUTE_H
 
 #include <vector>
+#include <optional>
 
 #include "../../models/include/transportSystem.h"
 
 namespace sdtmaps {
 
-Journey pathfind(const TransportSystem &transport_system, const QString& start_id, const QString& end_id, QTime start_time);
+const QDateTime MAX_DATETIME = QDateTime(QDate(3000, 1, 1), QTime(0, 0));
+
+struct dpEntry {
+    QDateTime optimalTime = MAX_DATETIME;
+    Transfer *lastTransfer = nullptr;
+    Ride lastRide;
+};
+
+std::optional<Journey> pathfind(const TransportSystem &transportSystem, const QString& startId, const QString& endId, const QDateTime &startDateTime);
 
 }
 
