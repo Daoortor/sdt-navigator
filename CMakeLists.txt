@@ -34,13 +34,16 @@ target_link_libraries(sdtmaps
 )
 
 # Tests
-add_executable(test
+add_executable(sdtmaps_test
         core/src/pathfinder.cpp
         models/src/transportSystem.cpp
         test/main.cpp
         test/test-data/minsk-subway.cpp)
-target_link_libraries(test
+target_link_libraries(sdtmaps_test
         Qt::Core
         rapidjson
         doctest
 )
+
+enable_testing()
+add_test(NAME sdtmaps_tests COMMAND test)
