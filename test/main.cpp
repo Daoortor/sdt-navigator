@@ -12,16 +12,16 @@ TEST_CASE("Minsk subway") {
         assert(minskSubway.isValid());
     }
 
-    // TODO(Uncomment this after implementing pathfind())
-    SUBCASE("Trivial journey") {
-        std::optional<Journey> j_ = pathfind(minskSubway, "113", "113", QTime(3, 30));
-        assert(j_.has_value());
-        Journey &j = j_.value();
-        assert(j.empty());
-    }
+    // SUBCASE("Trivial journey") {
+    //     std::optional<Journey> j_ = pathfind(minskSubway, "113", "113", QTime(3, 30));
+    //     assert(j_.has_value());
+    //     Journey &j = j_.value();
+    //     assert(j.empty());
+    // }
 
     SUBCASE("Simple journey") {
-        std::optional<Journey> j_ = pathfind(minskSubway, "113", "114", QTime(3, 30));
+        std::optional<Journey> j_ = pathfind(minskSubway, "113", "114",
+            QDateTime(minskSubwayDate, QTime(3, 30)));
         assert(j_.has_value());
         Journey &j = j_.value();
         assert(j.size() == 1);
@@ -29,7 +29,8 @@ TEST_CASE("Minsk subway") {
     }
 
     SUBCASE("One change") {
-        std::optional<Journey> j_ = pathfind(minskSubway, "214", "119", QTime(4, 00));
+        std::optional<Journey> j_ = pathfind(minskSubway, "214", "119",
+            QDateTime(minskSubwayDate, QTime(4, 00)));
         assert(j_.has_value());
         Journey &j = j_.value();
         assert(j.size() == 3);

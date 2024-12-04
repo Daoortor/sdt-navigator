@@ -5,6 +5,8 @@
 
 namespace sdtmaps {
 
+const QDate minskSubwayDate = QDate(2024, 1, 1);
+
 TransportSystem makeMinskSubway();
 
 }

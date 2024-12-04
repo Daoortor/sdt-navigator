@@ -83,14 +83,17 @@ TransportSystem makeMinskSubway() {
         &subway.stops[17], &subway.stops[18], &subway.stops[19], &subway.stops[20],
         &subway.stops[20], &subway.stops[19], &subway.stops[18], &subway.stops[17],
     };
+    int start = 0;
     for (const auto &route : subway.routes) {
         for (int tripIndex = 0; tripIndex < route.tripCount; tripIndex++) {
             for (int stopIndex = 0; stopIndex < route.stopCount; stopIndex++) {
-                subway.stopTimes[tripIndex * route.stopCount + stopIndex] = {
-                    QTime(tripIndex, 5 * stopIndex), QTime(tripIndex, 5 * stopIndex + 1)
+                subway.stopTimes[start + tripIndex * route.stopCount + stopIndex] = {
+                    QDateTime(minskSubwayDate, QTime(tripIndex, 5 * stopIndex)),
+                    QDateTime(minskSubwayDate, QTime(tripIndex, 5 * stopIndex + 1))
                 };
             }
         }
+        start += route.tripCount * route.stopCount;
     }
 
     return subway;
