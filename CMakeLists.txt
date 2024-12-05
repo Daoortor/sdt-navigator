@@ -27,7 +27,7 @@ include_directories(${CMAKE_SOURCE_DIR}/lib)
 FILE(GLOB Models models/src/*.cpp)
 
 # Main programm
-add_executable(sdtmaps app/main.cpp core/src/pathfinder.cpp ${Models})
+add_executable(sdtmaps ${Models} core/src/pathfinder.cpp app/main.cpp)
 target_link_libraries(sdtmaps
         Qt::Core
         rapidjson
@@ -35,8 +35,8 @@ target_link_libraries(sdtmaps
 
 # Tests
 add_executable(sdtmaps_test
+        ${Models}
         core/src/pathfinder.cpp
-        models/src/transportSystem.cpp
         test/main.cpp
         test/test-data/minsk-subway.cpp)
 target_link_libraries(sdtmaps_test

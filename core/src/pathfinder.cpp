@@ -3,7 +3,7 @@
 
 namespace sdtmaps {
 
-std::optional<Journey> pathfind(const TransportSystem &transportSystem, const QString& startId, const QString& endId, const QDateTime &startDateTime) {
+std::optional<Journey> pathfind(const TransportSystem &transportSystem, const QString& startId, const QString& endId, const DateTime &startDateTime) {
     const Stop *start = transportSystem.getStop(startId);
     const Stop *end = transportSystem.getStop(endId);
     if (!start || !end) {

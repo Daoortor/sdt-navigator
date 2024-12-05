@@ -7,9 +7,28 @@
 
 namespace sdtmaps {
 
+class DateTime {
+public:
+    DateTime() = default;
+    DateTime(long long timestamp);
+    DateTime(const QDateTime &qdt);
+    
+    bool operator==(const DateTime &other) const;
+    bool operator!=(const DateTime &other) const;
+    bool operator<(const DateTime &other) const;
+    bool operator<=(const DateTime &other) const;
+    bool operator>(const DateTime &other) const;
+    bool operator>=(const DateTime &other) const;
+    
+    DateTime addSecs(int secs) const;
+
+private:
+    long long timestamp;
+};
+
 struct StopTime {
-    QDateTime arrivalTime;
-    QDateTime departureTime;
+    DateTime arrivalTime;
+    DateTime departureTime;
 };
 
 // Public transport route with a fixed sequence of stops

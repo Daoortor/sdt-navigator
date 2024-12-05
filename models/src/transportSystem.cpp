@@ -69,8 +69,8 @@ TransportSystem::TransportSystem(const QDir &sourceDir) {
         for (auto &trip : routeData[1].GetArray()) {
             for (auto &stopTimeData : trip.GetArray()) {
                 stopTimes.emplace_back(
-                    QDateTime::fromSecsSinceEpoch(stopTimeData[0].GetInt()),
-                    QDateTime::fromSecsSinceEpoch(stopTimeData[1].GetInt())
+                    stopTimeData[0].GetInt64(),
+                    stopTimeData[1].GetInt64()
                 );
             }
         }
@@ -139,9 +139,6 @@ TransportSystem::TransportSystem(const QDir &sourceDir) {
         }
         if (stop.routes == nullptr) {
             throw std::runtime_error("Stop is not assigned to any route");
-            // if (stop.id == "000000037041") {
-            //     cout << "Setting stop.routes to &*stopRoutes.end()" << endl;
-            // }
             // stop.routes = &*stopRoutes.end();
         }
     }
