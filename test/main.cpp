@@ -49,7 +49,7 @@ TEST_CASE("Minsk subway") {
 TEST_CASE("Hamburg") {
     TransportSystem hamburg(QDir(PROJECT_ROOT_PATH "/data/gtfs_hamburg"));
     SUBCASE("isValid") {
-        // assert(hamburg.isValid());
+        assert(hamburg.isValid());
     }
 }
 

@@ -38,22 +38,23 @@ TransportSystem::TransportSystem(const QDir &sourceDir) {
     auto jsonTrips = details::parseJsonFile(sourceDir.filePath("trips.json"));
 
     map<QString, Stop *> stopById;
-
     stops.reserve(jsonStations.Size());
     cout << "Loading stops (" << jsonStations.Size() << ")..." << endl;
     for (auto &stopData : jsonStations.GetArray()) {
         stops.emplace_back(
             QString::fromUtf8(stopData[0].GetString()),
             QString::fromUtf8(stopData[1].GetString()),
-            &*transfers.end(),  // TODO: fix
-            &*stopRoutes.end(),   // TODO: fix
+            nullptr,
+            nullptr,
             0
         );
-        stopById[stops.back().id] = &stops.back();
+        stopById[stops.back().id] = &stops.back();  // `stops` has its size finalized
     }
     cout << "Stops loaded" << endl;
     
-    map<QString, std::vector<Route *>> routesByStop;
+    map<Stop *, std::vector<Route *>> routesByStop;
+    map<Route *, size_t> stopTimesIndexByRoute;
+    map<Route *, size_t> routeStopsIndexByRoute;
     routes.reserve(jsonTrips.Size());
     cout << "Loading routes (" << jsonTrips.Size() << ")..." << endl;
     for (auto &routeData : jsonTrips.GetArray()) {
@@ -61,7 +62,6 @@ TransportSystem::TransportSystem(const QDir &sourceDir) {
         routeStops.reserve(routeStops.size() + routeData[0].Size());
         for (auto &stop_id : routeData[0].GetArray()) {
             routeStops.push_back(stopById[QString::fromUtf8(stop_id.GetString())]);
-            // routesByStop[stop_id.GetString()].push_back(&route);
         }
 
         size_t firstAddedStopTime = stopTimes.size();
@@ -78,32 +78,44 @@ TransportSystem::TransportSystem(const QDir &sourceDir) {
         routes.emplace_back(
             static_cast<int>(routeData[1].Size()),
             static_cast<int>(routeData[0].Size()),
-            &stopTimes[firstAddedStopTime],
-            &routeStops[firstAddedStop]
+            nullptr,
+            nullptr
         );
+        stopTimesIndexByRoute[&routes.back()] = firstAddedStopTime;  // `routes` has its size finalized
+        routeStopsIndexByRoute[&routes.back()] = firstAddedStop;  // `routes` has its size finalized
 
         for (size_t i = firstAddedStop; i < routeStops.size(); i++) {
-            routesByStop[routeStops[i]->id].push_back(&routes.back());
+            routesByStop[routeStops[i]].push_back(&routes.back());  // `routes` has its size finalized
         }
     }
+    for (auto &[route, firstAddedStopTime] : stopTimesIndexByRoute) {
+        route->stopTimes = &stopTimes[firstAddedStopTime];  // `stopTimes` has its size finalized
+    }
+    for (auto &[route, firstAddedStop] : routeStopsIndexByRoute) {
+        route->stops = &routeStops[firstAddedStop];  // `routeStops` has its size finalized
+    }
     
+    map<Stop *, size_t> stopRoutesIndexByStop;
     cout << "Assigning routes to stops..." << endl;
-    for (auto &[stopId, curStopRoutes] : routesByStop) {
+    for (auto &[stop, curStopRoutes] : routesByStop) {
         size_t firstAddedRoute = stopRoutes.size();
         for (Route *route : curStopRoutes) {
             stopRoutes.emplace_back(route, route->stops);
         }
-        stopById[stopId]->routes = &stopRoutes[firstAddedRoute];
-        stopById[stopId]->routeCount = static_cast<int>(curStopRoutes.size());
+        stopRoutesIndexByStop[stop] = firstAddedRoute;
+        stop->routeCount = static_cast<int>(curStopRoutes.size());
+    }
+    for (auto &[stop, firstAddedRoute] : stopRoutesIndexByStop) {
+        stop->routes = &stopRoutes[firstAddedRoute];  // `stopRoutes` has its size finalized
     }
     cout << "Routes loaded" << endl;
     
-    map<QString, std::vector<Transfer>> transfersByStop;
+    map<Stop *, std::vector<Transfer>> transfersByStop;
     cout << "Loading transfers (" << jsonTransfers.Size() << ")..." << endl;
     for (auto &transferData : jsonTransfers.GetArray()) {
         Stop *startStop = stopById[QString::fromUtf8(transferData[0].GetString())];
         Stop *endStop = stopById[QString::fromUtf8(transferData[1].GetString())];
-        transfersByStop[startStop->id].emplace_back(  // TODO: How do we know when transfers for a stop are finished?
+        transfersByStop[startStop].emplace_back(
             startStop,
             endStop,
             transferData[2].GetInt()
@@ -111,14 +123,29 @@ TransportSystem::TransportSystem(const QDir &sourceDir) {
     }
 
     transfers.reserve(jsonTransfers.Size());
-    for (auto &[stopId, curStopTransfers] : transfersByStop) {
+    for (auto &[stop, curStopTransfers] : transfersByStop) {
         size_t firstAddedTransfer = transfers.size();
         for (Transfer &transfer : curStopTransfers) {
             transfers.push_back(transfer);
         }
-        stopById[stopId]->transfers = &transfers[firstAddedTransfer];
+        stop->transfers = &transfers[firstAddedTransfer];  // `transfers` has its size finalized
     }
     cout << "Transfers loaded" << endl;
+    
+    cout << "Final modifications..." << endl;
+    for (auto &stop : stops) {
+        if (stop.transfers == nullptr) {
+            stop.transfers = &*transfers.end();  // `transfers` has its size finalized
+        }
+        if (stop.routes == nullptr) {
+            throw std::runtime_error("Stop is not assigned to any route");
+            // if (stop.id == "000000037041") {
+            //     cout << "Setting stop.routes to &*stopRoutes.end()" << endl;
+            // }
+            // stop.routes = &*stopRoutes.end();
+        }
+    }
+    cout << "Transport system loaded" << endl;
 }
 
 bool TransportSystem::isValid() const {
