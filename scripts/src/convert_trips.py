@@ -1,15 +1,13 @@
+from datetime import datetime, date, time, timedelta
 from collections import defaultdict
 import os
 
 import simdjson as json
 import pandas as pd
 
-from src.converter_types import Station, StopTime, Stop, Trip, Route
+from src.ts_types import Station, StopTime, Stop, Trip, Route
 from src.utils import mkpath, dump_json
 
-
-RAW_DATA_PATH = mkpath('../data/raw/gtfs_hamburg')
-DATA_PATH = mkpath('../data/gtfs_hamburg')
 
 TRIPS_COLUMNS = {
     'route_id': str,
@@ -24,16 +22,16 @@ STOP_TIMES_COLUMNS = {
 }
 
 
-def convert_trips():
+def convert_trips(raw_data_path: str, data_path: str, data_date: date):
     print('Converting trips...')
 
-    assert os.path.isfile(mkpath(DATA_PATH, 'stations.json')), 'Run convert_stations.py first'
-    assert os.path.isfile(mkpath(DATA_PATH, 'stations_map.json')), 'Run convert_stations.py first'
+    assert os.path.isfile(mkpath(data_path, 'stations.json')), 'Run convert_stations.py first'
+    assert os.path.isfile(mkpath(data_path, 'stations_map.json')), 'Run convert_stations.py first'
 
-    with open(mkpath(DATA_PATH, 'stations.json'), 'r', encoding='utf-8') as file:
+    with open(mkpath(data_path, 'stations.json'), 'r', encoding='utf-8') as file:
         stations_by_id = {station.id: station for station in map(Station._make, json.load(file))}
 
-    with open(mkpath(DATA_PATH, 'stations_map.json'), 'r', encoding='utf-8') as file:
+    with open(mkpath(data_path, 'stations_map.json'), 'r', encoding='utf-8') as file:
         stations_by_id.update(
             (map_from, stations_by_id[map_to])
             for map_from, map_to in json.load(file).items()
@@ -41,7 +39,7 @@ def convert_trips():
 
     print('Reading stop_times.csv...')
     stop_times_csv = pd.read_csv(
-        mkpath(RAW_DATA_PATH, 'stop_times.csv'),
+        mkpath(raw_data_path, 'stop_times.csv'),
         keep_default_na=False,
         usecols=tuple(STOP_TIMES_COLUMNS.keys()),
         dtype=STOP_TIMES_COLUMNS,
@@ -53,14 +51,28 @@ def convert_trips():
     print(f'Parsing stop times ({len(stop_times_csv.index)} rows)...')
     for row in stop_times_csv.itertuples(index=False):
         assert row.stop_id in stations_by_id, f'Stop {row.stop_id} not found'
+
+        arrival_hours, arrival_minutes, arrival_seconds = map(int, row.arrival_time.split(':'))
+        departure_hours, departure_minutes, departure_seconds = map(int, row.departure_time.split(':'))
+
+        arrival_days, arrival_hours = divmod(arrival_hours, 24)
+
+        departure_days, departure_hours = divmod(departure_hours, 24)
+
+        arrival = datetime.combine(
+            data_date + timedelta(days=arrival_days),
+            time(hour=arrival_hours, minute=arrival_minutes, second=arrival_seconds)
+        )
+        departure = datetime.combine(
+            data_date + timedelta(days=departure_days),
+            time(hour=departure_hours, minute=departure_minutes, second=departure_seconds)
+        )
+
         stops_for_trip[row.trip_id].append((
             row.stop_sequence,
             Stop(
                 station=stations_by_id[row.stop_id],
-                time=StopTime(
-                    tuple(map(int, row.arrival_time.split(':'))),
-                    tuple(map(int, row.departure_time.split(':'))),
-                )
+                time=StopTime(int(arrival.timestamp()), int(departure.timestamp()))
             )
         ))
 
@@ -93,7 +105,7 @@ def convert_trips():
     for stations, trip_ids in similar_trips_dict.items():
         similar_trips.append(
             Route(
-                stations=stations,
+                station_ids=[station.id for station in stations],
                 trips=[
                     Trip([
                         stop.time
@@ -109,7 +121,7 @@ def convert_trips():
     ))
 
     print('Writing result...')
-    dump_json(similar_trips, mkpath(DATA_PATH, 'trips.json'), indent_depth=4)
+    dump_json(similar_trips, mkpath(data_path, 'trips.json'), indent_depth=4)
 
 
 if __name__ == '__main__':

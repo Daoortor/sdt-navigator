@@ -4,12 +4,9 @@ import os
 import simdjson as json
 import pandas as pd
 
-from src.converter_types import Station, Transfer
+from src.ts_types import Station, Transfer
 from src.utils import mkpath, dump_json
 
-
-RAW_DATA_PATH = mkpath('../data/raw/gtfs_hamburg')
-DATA_PATH = mkpath('../data/gtfs_hamburg')
 
 TRANSFERS_COLUMNS = {
     'from_stop_id': str,
@@ -19,16 +16,16 @@ TRANSFERS_COLUMNS = {
 }
 
 
-def convert_transfers():
+def convert_transfers(raw_data_path: str, data_path: str):
     print('Converting transfers...')
 
-    assert os.path.isfile(mkpath(DATA_PATH, 'stations.json')), 'Run convert_stations.py first'
-    assert os.path.isfile(mkpath(DATA_PATH, 'stations_map.json')), 'Run convert_stations.py first'
+    assert os.path.isfile(mkpath(data_path, 'stations.json')), 'Run convert_stations.py first'
+    assert os.path.isfile(mkpath(data_path, 'stations_map.json')), 'Run convert_stations.py first'
 
-    with open(mkpath(DATA_PATH, 'stations.json'), 'r', encoding='utf-8') as file:
+    with open(mkpath(data_path, 'stations.json'), 'r', encoding='utf-8') as file:
         stations_by_id = {station.id: station for station in map(Station._make, json.load(file))}
 
-    with open(mkpath(DATA_PATH, 'stations_map.json'), 'r', encoding='utf-8') as file:
+    with open(mkpath(data_path, 'stations_map.json'), 'r', encoding='utf-8') as file:
         stations_by_id.update(
             (map_from, stations_by_id[map_to])
             for map_from, map_to in json.load(file).items()
@@ -36,7 +33,7 @@ def convert_transfers():
 
     print('Reading transfers.csv...')
     transfers_csv = pd.read_csv(
-        mkpath(RAW_DATA_PATH, 'transfers.csv'),
+        mkpath(raw_data_path, 'transfers.csv'),
         keep_default_na=False,
         usecols=tuple(TRANSFERS_COLUMNS.keys()),
         dtype=TRANSFERS_COLUMNS,
@@ -83,7 +80,7 @@ def convert_transfers():
     print('Total amount of transfers:', len(transfers))
 
     print('Writing result...')
-    dump_json(transfers, mkpath(DATA_PATH, 'transfers.json'), indent_depth=1)
+    dump_json(transfers, mkpath(data_path, 'transfers.json'), indent_depth=1)
 
 
 if __name__ == '__main__':

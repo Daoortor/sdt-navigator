@@ -1,27 +1,24 @@
 import pandas as pd
 
-from src.converter_types import Station
+from src.ts_types import Station
 from src.utils import mkpath, dump_json
 
-
-RAW_DATA_PATH = mkpath('../data/raw/gtfs_hamburg')
-DATA_PATH = mkpath('../data/gtfs_hamburg')
 
 STATIONS_COLUMNS = {
     'stop_id': str,
     'stop_name': str,
-    'stop_lat': float,
-    'stop_lon': float,
+    # 'stop_lat': float,
+    # 'stop_lon': float,
     'parent_station': str
 }
 
 
-def convert_stations():
+def convert_stations(raw_data_path: str, data_path: str):
     print('Converting stations...')
 
     print('Reading stops.csv...')
     stops_csv = pd.read_csv(
-        mkpath(RAW_DATA_PATH, 'stops.csv'),
+        mkpath(raw_data_path, 'stops.csv'),
         keep_default_na=False,
         usecols=tuple(STATIONS_COLUMNS.keys()),
         dtype=STATIONS_COLUMNS,
@@ -45,8 +42,8 @@ def convert_stations():
         stations_by_name[row.stop_name] = Station(
             row.stop_name,
             row.stop_id,
-            row.stop_lat,
-            row.stop_lon
+            # row.stop_lat,
+            # row.stop_lon
         )
         stations_ids.add(row.stop_id)
 
@@ -60,8 +57,8 @@ def convert_stations():
     print('Total amount of stations:', len(stations_by_name))
 
     print('Writing result...')
-    dump_json(stations, mkpath(DATA_PATH, 'stations.json'), indent_depth=1)
-    dump_json(stations_id_map, mkpath(DATA_PATH, 'stations_map.json'))
+    dump_json(stations, mkpath(data_path, 'stations.json'), indent_depth=1)
+    dump_json(stations_id_map, mkpath(data_path, 'stations_map.json'))
 
 
 if __name__ == '__main__':

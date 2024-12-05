@@ -41,10 +41,10 @@ struct Transfer {
 
 // Public transport ride at a specific time from stop A to stop B
 struct Ride {
-    Route *route{}; // pointer to TransportSystem.routes[i]
-    Stop **firstStop{}; // pointer to TransportSystem.routeStops;
-    Stop **lastStop{};
-    StopTime *firstStopTime{}; // pointer to TransportSystem.stopTimes[i]
+    Route *route; // pointer to TransportSystem.routes[i]
+    Stop **firstStop; // pointer to TransportSystem.routeStops;
+    Stop **lastStop;
+    StopTime *firstStopTime; // pointer to TransportSystem.stopTimes[i]
 };
 
 typedef std::vector<std::variant<Transfer, Ride>> Journey;

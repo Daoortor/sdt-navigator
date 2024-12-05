@@ -4,13 +4,13 @@ from typing import NamedTuple, NewType
 class Station(NamedTuple):
     name: str
     id: str
-    lat: float
-    lon: float
+    # lat: float
+    # lon: float
 
 
 class StopTime(NamedTuple):
-    arrival_time: tuple[int, int, int]
-    departure_time: tuple[int, int, int]
+    arrival_time: int  # Timestamp
+    departure_time: int  # Timestamp
 
 
 class Stop(NamedTuple):
@@ -22,7 +22,7 @@ Trip = NewType('Trip', list[StopTime])
 
 
 class Route(NamedTuple):
-    stations: list[Station]
+    station_ids: list[str]
     trips: list[Trip]
 
 
