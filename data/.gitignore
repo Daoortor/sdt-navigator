@@ -1,2 +1,6 @@
+# Unpacked data
+*.txt
+*.csv
+
 # Converted data
 *.json

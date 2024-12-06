@@ -1,4 +1,6 @@
 from datetime import date
+import shutil
+import os
 
 from src.utils import mkpath
 from src.convert_transfers import convert_transfers
@@ -14,16 +16,33 @@ cities = [
 ]
 
 if __name__ == '__main__':
+
+    archives = []
+    for filename in os.listdir('../data/raw'):
+        file_path = mkpath('../data/raw', filename)
+        directory_path = mkpath('../data/raw', filename[:-4])
+        if filename.endswith('.zip') and not os.path.isdir(directory_path):
+            archives.append((file_path, directory_path))
+
+    if archives:
+        print(f'>>> Unpacking ZIP archives...')
+        for archive, directory in archives:
+            print(f'Unpacking {archive}...')
+            shutil.unpack_archive(archive, directory)
+        print()
+
+    print('>>> Convering TXT file to CSV...')
+    for city, data_date in cities:
+        raw_data_path = mkpath(f'../data/raw/gtfs_{city}')
+        txt_to_csv(raw_data_path)
+    print()
+
     for city, data_date in cities:
         print(f'>>> Converting {city} GTFS data...')
         raw_data_path = mkpath(f'../data/raw/gtfs_{city}')
         data_path = mkpath(f'../data/gtfs_{city}')
 
         print()
-
-        txt_to_csv(raw_data_path)
-        print()
-
         convert_stations(raw_data_path, data_path)
         print()
         convert_trips(raw_data_path, data_path, data_date)

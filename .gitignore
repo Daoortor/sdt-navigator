@@ -34,9 +34,6 @@
 # Python cache
 __pycache__/
 
-# Archives
-*.zip
-
 # JetBrains
 /.idea/
 

@@ -4,7 +4,6 @@ from src.utils import mkpath
 
 
 def txt_to_csv(folder_path: str):
-    print('Convering TXT file to CSV...')
     for filename in os.listdir(folder_path):
         if filename.endswith('.txt'):
             csv_filepath = mkpath(folder_path, filename[:-4] + '.csv')
