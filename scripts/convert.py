@@ -9,6 +9,7 @@ from txt_to_csv import txt_to_csv
 
 cities = [
     # ('rome', date(2020, 3, 24)),  # GTFS data date: 24 March 2020
+    ('paris', date(2021, 3, 25)),  # GTFS data date: 25 March 2021
     ('hamburg', date(2020, 3, 20))  # GTFS data date: 20 March 2020
 ]
 
@@ -28,3 +29,4 @@ if __name__ == '__main__':
         convert_trips(raw_data_path, data_path, data_date)
         print()
         convert_transfers(raw_data_path, data_path)
+        print()

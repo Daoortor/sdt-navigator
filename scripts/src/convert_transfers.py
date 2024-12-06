@@ -52,6 +52,14 @@ def convert_transfers(raw_data_path: str, data_path: str):
 
         assert row.min_transfer_time is not None, f'Missing min_transfer_time for transfer {row}'
 
+        if row.from_stop_id not in stations_by_id:
+            print(f'Stop {row.from_stop_id} not found')
+            continue
+
+        if row.to_stop_id not in stations_by_id:
+            print(f'Stop {row.to_stop_id} not found')
+            continue
+
         from_station = min(
             stations_by_id[row.from_stop_id],
             stations_by_id[row.to_stop_id],
