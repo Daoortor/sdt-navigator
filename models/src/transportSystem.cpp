@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "rapidjson/document.h"
+#include "rapidjson/filereadstream.h"
 
 using namespace std;
 using namespace rapidjson;
@@ -12,26 +13,27 @@ namespace sdtmaps {
 namespace details {
 
 Document parseJsonFile(const QString &filename) {
-    QFile file(filename);
-    if (!file.open(QIODevice::ReadOnly)) {
-        throw std::runtime_error("Failed to open JSON file " + filename.toStdString());
-    }
-    QString json = file.readAll();
-    file.close();
-
+    FILE* fp = fopen(filename.toUtf8().constData(), "r");
+    char readBuffer[65536];
+    FileReadStream is(fp, readBuffer, sizeof(readBuffer));
+    
+    cout << "Parsing JSON file " << filename.toStdString() << "..." << endl;
     Document document;
-    document.Parse(json.toUtf8().constData());
+    document.ParseStream(is);
+    
+    fclose(fp);
+   
     if (document.HasParseError()) {
-        throw std::runtime_error("Failed to parse JSON file " + filename.toStdString());
+        throw runtime_error("Failed to parse JSON file " + filename.toStdString());
     }
-
+    
     return document;
 }
 
 }
 
 TransportSystem::TransportSystem(const QDir &sourceDir) {
-    std::cout << "Loading transport system from directory \"" << sourceDir.dirName().toStdString() << "\"..." << std::endl;
+    cout << "Loading transport system from directory \"" << sourceDir.dirName().toStdString() << "\"..." << endl;
 
     auto jsonStations = details::parseJsonFile(sourceDir.filePath("stations.json"));
     auto jsonTransfers = details::parseJsonFile(sourceDir.filePath("transfers.json"));
@@ -52,7 +54,7 @@ TransportSystem::TransportSystem(const QDir &sourceDir) {
     }
     cout << "Stops loaded" << endl;
     
-    map<Stop *, std::vector<Route *>> routesByStop;
+    map<Stop *, vector<Route *>> routesByStop;
     map<Route *, size_t> stopTimesIndexByRoute;
     map<Route *, size_t> routeStopsIndexByRoute;
     routes.reserve(jsonTrips.Size());
@@ -110,7 +112,7 @@ TransportSystem::TransportSystem(const QDir &sourceDir) {
     }
     cout << "Routes loaded" << endl;
     
-    map<Stop *, std::vector<Transfer>> transfersByStop;
+    map<Stop *, vector<Transfer>> transfersByStop;
     cout << "Loading transfers (" << jsonTransfers.Size() << ")..." << endl;
     for (auto &transferData : jsonTransfers.GetArray()) {
         Stop *startStop = stopById[QString::fromUtf8(transferData[0].GetString())];
@@ -138,7 +140,7 @@ TransportSystem::TransportSystem(const QDir &sourceDir) {
             stop.transfers = &*transfers.end();  // `transfers` has its size finalized
         }
         if (stop.routes == nullptr) {
-            throw std::runtime_error("Stop is not assigned to any route: " + stop.id.toStdString());
+            throw runtime_error("Stop is not assigned to any route: " + stop.id.toStdString());
             // stop.routes = &*stopRoutes.end();
         }
     }
@@ -146,22 +148,22 @@ TransportSystem::TransportSystem(const QDir &sourceDir) {
 }
 
 bool TransportSystem::isValid() const {
-    bool routesAreValid = std::ranges::all_of(routes.begin(), routes.end(), [&](const Route &route) {
+    bool routesAreValid = ranges::all_of(routes.begin(), routes.end(), [&](const Route &route) {
         return route.stopTimes >= &*stopTimes.begin() && route.stopTimes < &*stopTimes.end() &&
             route.stops >= &*routeStops.begin() && route.stops < &*routeStops.end();
     });
-    bool routeStopsAreValid = std::ranges::all_of(routeStops.begin(), routeStops.end(), [&](const Stop *routeStop) {
+    bool routeStopsAreValid = ranges::all_of(routeStops.begin(), routeStops.end(), [&](const Stop *routeStop) {
         return routeStop >= &*stops.begin() && routeStop < &*stops.end();
     });
-    bool stopsAreValid = std::ranges::all_of(stops.begin(), stops.end(), [&](const Stop &stop) {
+    bool stopsAreValid = ranges::all_of(stops.begin(), stops.end(), [&](const Stop &stop) {
         return stop.transfers >= &*transfers.begin() && stop.transfers <= &*transfers.end() &&
             stop.routes >= &*stopRoutes.begin() && stop.routes < &*stopRoutes.end();
     });
-    bool transfersAreValid = std::ranges::all_of(transfers.begin(), transfers.end(), [&](const Transfer &transfer) {
+    bool transfersAreValid = ranges::all_of(transfers.begin(), transfers.end(), [&](const Transfer &transfer) {
         return transfer.start >= &*stops.begin() && transfer.start < &*stops.end() &&
             transfer.end >= &*stops.begin() && transfer.end < &*stops.end();
     });
-    bool stopRoutesAreValid = std::ranges::all_of(stopRoutes.begin(), stopRoutes.end(), [&](const std::pair<Route *, Stop **> &entry) {
+    bool stopRoutesAreValid = ranges::all_of(stopRoutes.begin(), stopRoutes.end(), [&](const pair<Route *, Stop **> &entry) {
         Route *stopRoute = entry.first;
         return stopRoute >= &*routes.begin() && stopRoute < &*routes.end();
     });

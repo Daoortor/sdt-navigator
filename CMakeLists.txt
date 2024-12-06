@@ -8,6 +8,13 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
+# Set compiler optimizations
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -march=native -mtune=native -mmmx -msse -msse2")
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    message(WARNING "Optimizations for MSVC are not fully configured")
+endif()
+
 # Qt library
 find_package(Qt6 COMPONENTS
         Core
