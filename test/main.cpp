@@ -53,4 +53,11 @@ TEST_CASE("Hamburg") {
     }
 }
 
+TEST_CASE("Paris") {
+    TransportSystem paris(QDir(PROJECT_ROOT_PATH "/data/gtfs_paris"));
+    SUBCASE("isValid") {
+        assert(paris.isValid());
+    }
+}
+
 }

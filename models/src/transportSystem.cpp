@@ -138,7 +138,7 @@ TransportSystem::TransportSystem(const QDir &sourceDir) {
             stop.transfers = &*transfers.end();  // `transfers` has its size finalized
         }
         if (stop.routes == nullptr) {
-            throw std::runtime_error("Stop is not assigned to any route");
+            throw std::runtime_error("Stop is not assigned to any route: " + stop.id.toStdString());
             // stop.routes = &*stopRoutes.end();
         }
     }

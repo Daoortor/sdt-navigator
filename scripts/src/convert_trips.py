@@ -58,7 +58,6 @@ def convert_trips(raw_data_path: str, data_path: str, data_date: date):
         departure_hours, departure_minutes, departure_seconds = map(int, row.departure_time.split(':'))
 
         arrival_days, arrival_hours = divmod(arrival_hours, 24)
-
         departure_days, departure_hours = divmod(departure_hours, 24)
 
         arrival = datetime.combine(

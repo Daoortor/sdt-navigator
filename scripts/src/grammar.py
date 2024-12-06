@@ -11,4 +11,6 @@ def prettify_names(name: str) -> str:
 
     result = GRAMMAR_MAP.get(result, result)
 
+    result = result.rstrip('.')
+
     return result
