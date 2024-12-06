@@ -19,6 +19,10 @@ TRANSFERS_COLUMNS = {
 def convert_transfers(raw_data_path: str, data_path: str):
     print('Converting transfers...')
 
+    if not os.path.isfile(mkpath(raw_data_path, 'transfers.csv')):
+        print('No transfers.csv found')
+        return
+
     assert os.path.isfile(mkpath(data_path, 'stations.json')), 'Run convert_stations.py first'
     assert os.path.isfile(mkpath(data_path, 'stations_map.json')), 'Run convert_stations.py first'
 

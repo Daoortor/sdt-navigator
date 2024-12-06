@@ -14,7 +14,7 @@ TRIPS_COLUMNS = {
     'trip_id': int
 }
 STOP_TIMES_COLUMNS = {
-    'trip_id': int,
+    'trip_id': str,
     'stop_id': str,
     'arrival_time': str,
     'departure_time': str,
@@ -50,7 +50,9 @@ def convert_trips(raw_data_path: str, data_path: str, data_date: date):
 
     print(f'Parsing stop times ({len(stop_times_csv.index)} rows)...')
     for row in stop_times_csv.itertuples(index=False):
-        assert row.stop_id in stations_by_id, f'Stop {row.stop_id} not found'
+        if row.stop_id not in stations_by_id:
+            print(f'Stop {row.stop_id} not found')
+            continue  # TODO
 
         arrival_hours, arrival_minutes, arrival_seconds = map(int, row.arrival_time.split(':'))
         departure_hours, departure_minutes, departure_seconds = map(int, row.departure_time.split(':'))

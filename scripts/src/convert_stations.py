@@ -1,6 +1,7 @@
 import pandas as pd
 
 from src.ts_types import Station
+from src.grammar import prettify_names
 from src.utils import mkpath, dump_json
 
 
@@ -37,9 +38,13 @@ def convert_stations(raw_data_path: str, data_path: str):
             stations_id_map[row.stop_id] = row.parent_station
             continue
 
-        assert row.stop_name not in stations_by_name, f'Stop name {row.stop_name} already exists'
+        stop_name = prettify_names(row.stop_name)
 
-        stations_by_name[row.stop_name] = Station(
+        if stop_name in stations_by_name:
+            stations_id_map[row.stop_id] = stations_by_name[stop_name].id
+            continue
+
+        stations_by_name[stop_name] = Station(
             row.stop_name,
             row.stop_id,
             # row.stop_lat,
@@ -50,7 +55,7 @@ def convert_stations(raw_data_path: str, data_path: str):
     # Checking: all parent_station stop ids should be stored
     for row in stops_csv.itertuples(index=False):
         if row.parent_station:
-            assert row.parent_station in stations_ids, row.parent_station
+            assert stations_id_map.get(row.parent_station, row.parent_station) in stations_ids, f'Parent station not found: {row.parent_station}'
 
     stations: list[Station] = sorted(stations_by_name.values())
 

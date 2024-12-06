@@ -56,6 +56,9 @@ def dump_json(data, path: str, indent_depth=float('inf')):
     filename = os.path.basename(path)
     filename_pretty = os.path.splitext(filename)[0] + '.pretty.json'
 
+    if not os.path.isdir(os.path.dirname(path)):
+        os.makedirs(os.path.dirname(path))
+
     # print('Writing compressed file...')
     with open(path, 'wb') as file:
         file.write(orjson.dumps(data, default=_orjson_default))
