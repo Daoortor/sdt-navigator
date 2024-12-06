@@ -19,6 +19,8 @@ public:
     bool operator<=(const DateTime &other) const;
     bool operator>(const DateTime &other) const;
     bool operator>=(const DateTime &other) const;
+
+    friend std::ostream& operator<<(std::ostream& os, const DateTime &dt);
     
     DateTime addSecs(int secs) const;
 
@@ -67,6 +69,13 @@ struct Ride {
 };
 
 typedef std::vector<std::variant<Transfer, Ride>> Journey;
+
+template <typename T>
+std::string to_string(const T& value) {
+    std::ostringstream ss;
+    ss << value;
+    return ss.str();
+}
 
 }
 

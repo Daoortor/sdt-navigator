@@ -1,5 +1,6 @@
 #include "../include/pathfinder.h"
 #include <utility>
+#include <iostream>
 
 namespace sdtmaps {
 
@@ -9,9 +10,11 @@ std::optional<Journey> pathfind(const TransportSystem &transportSystem, const QS
     if (!start || !end) {
         return std::nullopt;
     }
+    size_t startStopsIndex = start - &*transportSystem.stops.begin();
+    size_t endStopsIndex = end - &*transportSystem.stops.begin();
     // t_k(p_i)
     std::vector dp(1, std::vector<dpEntry>(transportSystem.stops.size()));
-    dp[0][start - &transportSystem.stops[0]] = {startDateTime};
+    dp[0][startStopsIndex] = {startDateTime};
     std::vector marked = {start};
     for (int k = 1; !marked.empty(); k++) {
         dp.emplace_back(dp[k-1]);
@@ -21,7 +24,8 @@ std::optional<Journey> pathfind(const TransportSystem &transportSystem, const QS
             for (auto routeEntry = markedStop->routes; routeEntry != &markedStop->routes[markedStop->routeCount]; routeEntry++) {
                 Route *servingRoute = routeEntry->first;
                 Stop **stopRoutesEntry = routeEntry->second;
-                auto entry = &entries[servingRoute - &*transportSystem.routes.begin()];
+                size_t servingRouteIndex = servingRoute - &*transportSystem.routes.begin();
+                auto entry = &entries[servingRouteIndex];
                 if (!*entry) {
                     routesToRelax.emplace_back(servingRoute, stopRoutesEntry);
                     *entry = &*routesToRelax.end() - 1;
@@ -32,11 +36,9 @@ std::optional<Journey> pathfind(const TransportSystem &transportSystem, const QS
                 }
             }
         }
-        routesToRelax[0].first - &*transportSystem.routes.begin();
         marked.clear();
         std::vector isMarked(transportSystem.stops.size(), false);
         for (auto &[routeToRelax, initStop] : routesToRelax) {
-            std::vector debug(routeToRelax->stopTimes, routeToRelax->stopTimes + routeToRelax->stopCount * routeToRelax->tripCount);
             StopTime *currentTrip = nullptr;
             Stop **boardedStop = nullptr;
             for (Stop **currentStop = initStop; currentStop != routeToRelax->stops + routeToRelax->stopCount; currentStop++) {
@@ -55,8 +57,8 @@ std::optional<Journey> pathfind(const TransportSystem &transportSystem, const QS
                         boardedStop = currentStop;
                     }
                     StopTime *currentStopTime = currentTrip + currentStopRouteIndex;
-                    dpEntry *currentStopOpt = &dp[k-1][*currentStop - &*transportSystem.stops.begin()];
-                    dpEntry *endStopOpt = &dp[k-1][end - &*transportSystem.stops.begin()];
+                    dpEntry *currentStopOpt = &dp[k-1][currentStopStopsIndex];
+                    dpEntry *endStopOpt = &dp[k-1][endStopsIndex];
                     if (currentStopTime->arrivalTime < std::min(currentStopOpt->optimalTime, endStopOpt->optimalTime)) {
                         dp[k][currentStopStopsIndex] = {
                             currentStopTime->arrivalTime,
@@ -71,16 +73,16 @@ std::optional<Journey> pathfind(const TransportSystem &transportSystem, const QS
                         isMarked[currentStopStopsIndex] = true;
                     }
                 }
-                for (int i=0; i<isMarked.size(); i++) {
-                    if (isMarked[i]) {
-                        marked.push_back(&*transportSystem.stops.begin() + i);
-                    }
-                }
+            }
+        }
+        for (int i=0; i<isMarked.size(); i++) {
+            if (isMarked[i]) {
+                marked.push_back(&*transportSystem.stops.begin() + i);
             }
         }
         for (auto markedStop : marked) {
             for (Transfer *transfer=markedStop->transfers; transfer!=&*transportSystem.transfers.end() && transfer->start == markedStop; transfer++) {
-                size_t startIndex = transfer->end - &*transportSystem.stops.begin();
+                size_t startIndex = transfer->start - &*transportSystem.stops.begin();
                 size_t endIndex = transfer->end - &*transportSystem.stops.begin();
                 if (dp[k][startIndex].optimalTime.addSecs(transfer->time) < dp[k][endIndex].optimalTime) {
                     dp[k][endIndex] = {
@@ -88,7 +90,14 @@ std::optional<Journey> pathfind(const TransportSystem &transportSystem, const QS
                         transfer,
                         nullptr
                     };
+                    isMarked[endIndex] = true;
                 }
+            }
+        }
+        marked.clear();
+        for (int i=0; i<isMarked.size(); i++) {
+            if (isMarked[i]) {
+                marked.push_back(&*transportSystem.stops.begin() + i);
             }
         }
     }
@@ -96,12 +105,14 @@ std::optional<Journey> pathfind(const TransportSystem &transportSystem, const QS
     Journey result;
     Stop *cur = const_cast<Stop *>(end);
     while (cur != start) {
-        dpEntry curEntry = dp[lastLayer][cur - &*transportSystem.stops.begin()];
+        size_t curStopsIndex = cur - &*transportSystem.stops.begin();
+        dpEntry curEntry = dp[lastLayer][curStopsIndex];
         if (curEntry.lastRide.route) {
             result.emplace_back(std::in_place_type_t<Ride>(), curEntry.lastRide);
             cur = *curEntry.lastRide.firstStop;
         } else if (curEntry.lastTransfer) {
             result.emplace_back(std::in_place_type_t<Transfer>(), *curEntry.lastTransfer);
+            cur = curEntry.lastTransfer->start;
         } else {
             return std::nullopt;
         }

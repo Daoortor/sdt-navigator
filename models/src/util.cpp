@@ -34,4 +34,9 @@ DateTime DateTime::addSecs(int secs) const {
     return DateTime(this->timestamp + secs);
 }
 
+std::ostream& operator<<(std::ostream& os, const DateTime &dt) {
+    QDateTime QTdt = QDateTime::fromSecsSinceEpoch(dt.timestamp);
+    return os << QTdt.toString().toStdString();
+}
+
 }
