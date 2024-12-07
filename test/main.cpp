@@ -24,7 +24,7 @@ TEST_CASE("Minsk subway") {
             minskSubway, "113", "114", QDateTime(minskSubwayDate, QTime(3, 30)),
             {
                 {
-                            {JourneyElementType::RIDE, "113", "114"}
+                    {JourneyElementType::RIDE, "113", "114"}
                 },
                 QDateTime(minskSubwayDate, QTime(4, 05))
         }).check();
@@ -83,8 +83,26 @@ TEST_CASE("Hamburg") {
 
 TEST_CASE("Paris") {
     TransportSystem paris(QDir(PROJECT_ROOT_PATH "/data/gtfs_paris"));
+    QDate parisDate(2021, 03, 25);
+
     SUBCASE("isValid") {
         assert(paris.isValid());
+    }
+
+    SUBCASE("Temple - Pasteur") {
+        TestCase(
+            paris, "1683", "1781", QDateTime(parisDate, QTime(6, 00)),
+            {
+                {
+                    {JourneyElementType::RIDE, "1683", "1889"},
+                    {JourneyElementType::TRANSFER, "1889", "2053"},
+                    {JourneyElementType::RIDE, "2053", "1967"},
+                    {JourneyElementType::RIDE, "1967", "1996"},
+                    {JourneyElementType::RIDE, "1996", "1781"},
+                },
+                QDateTime(parisDate, QTime(8, 35))
+            }
+        ).check();
     }
 }
 
