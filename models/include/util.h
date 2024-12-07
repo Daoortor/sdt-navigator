@@ -20,9 +20,12 @@ public:
     bool operator>(const DateTime &other) const;
     bool operator>=(const DateTime &other) const;
 
+    DateTime operator+(int other) const;
+    DateTime operator-(int other) const;
+    DateTime &operator+=(int other);
+    DateTime &operator-=(int other);
+
     friend std::ostream& operator<<(std::ostream& os, const DateTime &dt);
-    
-    DateTime addSecs(int secs) const;
 
 private:
     long long timestamp;
@@ -66,6 +69,9 @@ struct Ride {
     Stop **firstStop; // pointer to TransportSystem.routeStops;
     Stop **lastStop;
     StopTime *firstStopTime; // pointer to TransportSystem.stopTimes[i]
+
+    [[nodiscard]] DateTime startTime() const;
+    [[nodiscard]] DateTime endTime() const;
 };
 
 typedef std::vector<std::variant<Transfer, Ride>> Journey;

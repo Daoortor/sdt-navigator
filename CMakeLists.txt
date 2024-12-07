@@ -45,6 +45,7 @@ add_executable(sdtmaps_test
         ${Models}
         core/src/pathfinder.cpp
         test/main.cpp
+        test/util.cpp
         test/test-data/minsk-subway.cpp)
 target_link_libraries(sdtmaps_test
         Qt::Core

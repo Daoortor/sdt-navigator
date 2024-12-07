@@ -84,9 +84,9 @@ std::optional<Journey> pathfind(const TransportSystem &transportSystem, const QS
             for (Transfer *transfer=markedStop->transfers; transfer!=&*transportSystem.transfers.end() && transfer->start == markedStop; transfer++) {
                 size_t startIndex = transfer->start - &*transportSystem.stops.begin();
                 size_t endIndex = transfer->end - &*transportSystem.stops.begin();
-                if (dp[k][startIndex].optimalTime.addSecs(transfer->time) < dp[k][endIndex].optimalTime) {
+                if (dp[k][startIndex].optimalTime + transfer->time < dp[k][endIndex].optimalTime) {
                     dp[k][endIndex] = {
-                        dp[k][startIndex].optimalTime.addSecs(transfer->time),
+                        dp[k][startIndex].optimalTime + transfer->time,
                         transfer,
                         nullptr
                     };
