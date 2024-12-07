@@ -16,8 +16,8 @@ enum class JourneyElementType {
 
 struct SimplifiedJourneyElement {
     JourneyElementType type{};
-    std::string startId;
-    std::string endId;
+    QString startId;
+    QString endId;
 
     bool operator==(const SimplifiedJourneyElement &other) const = default;
 };

@@ -77,10 +77,10 @@ struct Ride {
 typedef std::vector<std::variant<Transfer, Ride>> Journey;
 
 template <typename T>
-std::string to_string(const T& value) {
+QString to_string(const T& value) {
     std::ostringstream ss;
     ss << value;
-    return ss.str();
+    return {ss.str().c_str()};
 }
 
 }
