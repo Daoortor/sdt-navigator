@@ -13,10 +13,11 @@ const QDateTime MAX_DATETIME = QDateTime(QDate(3000, 1, 1), QTime(0, 0));
 struct dpEntry {
     DateTime optimalTime = MAX_DATETIME;
     Transfer *lastTransfer = nullptr;
-    Ride lastRide;
+    Ride lastRide{};
 };
 
-std::optional<Journey> pathfind(const TransportSystem &transportSystem, const QString& startId, const QString& endId, const DateTime &startDateTime);
+std::optional<Journey> pathfind(const TransportSystem &transportSystem, const QString& sourceId, const QString& targetId, const DateTime &initDateTime, size_t
+                                maxChanges = 0);
 
 }
 
