@@ -53,5 +53,6 @@ target_link_libraries(sdtmaps_test
         doctest
 )
 
+# CTest
 enable_testing()
-add_test(NAME sdtmaps_tests COMMAND test)
+add_test(NAME test COMMAND sdtmaps_test)

@@ -38,4 +38,5 @@ __pycache__/
 /.idea/
 
 # CMake
+/build/
 cmake-build-debug/
