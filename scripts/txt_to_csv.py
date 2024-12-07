@@ -1,6 +1,6 @@
 import os
 
-from src.utils import mkpath
+from src.utils import mkpath, mkpath_root
 
 
 def txt_to_csv(folder_path: str):
@@ -13,4 +13,4 @@ def txt_to_csv(folder_path: str):
 
 
 if __name__ == '__main__':
-    txt_to_csv(mkpath('../data/raw/gtfs_hamburg'))
+    txt_to_csv(mkpath_root('data/raw/gtfs_hamburg'))

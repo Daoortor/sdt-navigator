@@ -1,8 +1,6 @@
-import os
+from src.utils import mkpath_root
 
-from src.utils import mkpath
-
-with open(mkpath(os.path.dirname(__file__), 'grammar_map.txt'), 'r', encoding='utf-8') as file:
+with open(mkpath_root('scripts/src/grammar_map.txt'), 'r', encoding='utf-8') as file:
     GRAMMAR_MAP = dict(map(lambda line: map(str.strip, line.split(':')), file))
 
 

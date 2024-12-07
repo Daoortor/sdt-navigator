@@ -5,7 +5,7 @@
 
 This project is developed in C++ and Python and has been primarily tested on Linux. For optimal compatibility and performance, we recommend using a Linux environment. The following instructions are specifically tailored for Linux systems:
 
-1. Install [Python 3](https://www.python.org) (tested on `Python 3.12`, newer versions are preferable)
+1. Install [Python 3.11](https://www.python.org) or newer version
 2. Install [CMake](https://cmake.org) (e.g. `sudo apt install cmake` for Ubuntu)
 3. Install Qt 6 (e.g. `sudo apt install qt6-base-dev` for Ubuntu)
 4. Install Python packages by running `pip install -r scripts/requirements.txt` in the project's root directory

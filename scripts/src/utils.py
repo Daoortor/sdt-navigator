@@ -5,8 +5,15 @@ import os
 import orjson
 
 
+ROOT_PATH = os.path.dirname(os.path.abspath(__file__)) + '/../../'
+
+
 def mkpath(*paths: str) -> str:
     return os.path.normpath(os.path.join(*paths))
+
+
+def mkpath_root(*paths: str) -> str:
+    return mkpath(ROOT_PATH, *paths)
 
 
 # def load_json(path: str) -> dict | list:
