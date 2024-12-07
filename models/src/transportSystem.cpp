@@ -17,7 +17,6 @@ Document parseJsonFile(const QString &filename) {
     char readBuffer[65536];
     FileReadStream is(fp, readBuffer, sizeof(readBuffer));
     
-    cout << "Parsing JSON file " << filename.toStdString() << "..." << endl;
     Document document;
     document.ParseStream(is);
     

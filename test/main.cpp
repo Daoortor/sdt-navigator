@@ -11,9 +11,7 @@ namespace sdtmaps::test {
 TEST_CASE("Minsk subway") {
     TransportSystem minskSubway = makeMinskSubway();
 
-    SUBCASE("isValid") {
-        assert(minskSubway.isValid());
-    }
+    REQUIRE(minskSubway.isValid());
 
     SUBCASE("Trivial journey") {
         TestCase(minskSubway, "113", "113", QDateTime(minskSubwayDate, QTime(3, 30)), {}).check();
@@ -49,9 +47,7 @@ TEST_CASE("Hamburg") {
     TransportSystem hamburg(QDir(PROJECT_ROOT_PATH "/data/gtfs_hamburg"));
     QDate hamburgDate(2020, 03, 20);
 
-    SUBCASE("isValid") {
-        assert(hamburg.isValid());
-    }
+    REQUIRE(hamburg.isValid());
 
     SUBCASE("Iserbrook - Hamburg Hbf") {
         TestCase(
@@ -85,9 +81,7 @@ TEST_CASE("Paris") {
     TransportSystem paris(QDir(PROJECT_ROOT_PATH "/data/gtfs_paris"));
     QDate parisDate(2021, 03, 25);
 
-    SUBCASE("isValid") {
-        assert(paris.isValid());
-    }
+    REQUIRE(paris.isValid());
 
     SUBCASE("Temple - Pasteur") {
         TestCase(
