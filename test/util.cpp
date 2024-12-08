@@ -33,10 +33,10 @@ SimplifiedJourney::SimplifiedJourney(const Journey &journey) {
 }
 
 void TestCase::check() const {
-    auto j = pathfind(transportSystem, startId, endId, startTime);
-    assert(j.has_value());
-    SimplifiedJourney actual = SimplifiedJourney(j.value());
-    std::cout << j.value();
+    auto journey = pathfind(transportSystem, startId, endId, startTime);
+    assert(journey.has_value());
+    SimplifiedJourney actual = SimplifiedJourney(journey.value());
+    std::cout << journey.value();
     assert(expected == actual);
 }
 
