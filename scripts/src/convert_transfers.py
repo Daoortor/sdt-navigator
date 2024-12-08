@@ -11,8 +11,10 @@ from src.utils import mkpath, dump_json
 TRANSFERS_COLUMNS = {
     'from_stop_id': str,
     'to_stop_id': str,
-    'transfer_type': 'int8',
-    'min_transfer_time': 'Int32'
+    # 'transfer_type': 'int8',
+    'transfer_type': int,
+    # 'min_transfer_time': 'Int32'
+    'min_transfer_time': 'Int64'
 }
 
 

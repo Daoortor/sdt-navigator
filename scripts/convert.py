@@ -14,7 +14,7 @@ from txt_to_csv import txt_to_csv
 
 # ====================================================== Settings ======================================================
 
-DEBUG = True
+DEBUG = False
 
 cities = [
     ('hamburg', date(2020, 3, 20)),  # GTFS data date: 20 March 2020

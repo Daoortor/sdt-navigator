@@ -14,7 +14,8 @@ ROUTES_COLUMNS = {
     'route_id': str,
     'route_short_name': str,
     'route_long_name': str,
-    'route_type': 'int8'
+    # 'route_type': 'int8'
+    'route_type': int
 }
 TRIPS_COLUMNS = {
     'route_id': str,
@@ -25,7 +26,8 @@ STOP_TIMES_COLUMNS = {
     'stop_id': str,
     'arrival_time': str,
     'departure_time': str,
-    'stop_sequence': 'int8'
+    # 'stop_sequence': 'int8'
+    'stop_sequence': int
 }
 
 
@@ -70,10 +72,10 @@ def convert_trips(raw_data_path: str, data_path: str, data_date: date):
 
     print(f'Parsing stop times ({len(stop_times_csv.index)} rows)...')
 
-    routes: dict[str, dict[str, list[Stop]]] = defaultdict(lambda: defaultdict(list))  # {route_id: {trip_id: [stops]}}
+    routes: dict[str, dict[str, list[tuple[int, Stop]]]] = defaultdict(lambda: defaultdict(list))  # {route_id: {trip_id: [(stop_sequence, Stop)]}}
 
-    stop_times_csv.sort_values('stop_sequence', inplace=True)
-    stop_times_csv.drop(columns='stop_sequence', inplace=True)
+    # stop_times_csv.sort_values('stop_sequence', inplace=True)
+    # stop_times_csv.drop(columns='stop_sequence', inplace=True)
 
     for row in stop_times_csv.itertuples(index=False):
         if row.stop_id not in stations_by_id:
@@ -90,15 +92,24 @@ def convert_trips(raw_data_path: str, data_path: str, data_date: date):
         departure = departure_days * 86400 + departure_hours * 3600 + departure_minutes * 60 + departure_seconds
 
         # stops_for_trip[row.trip_id].append(
-        routes[route_id_by_trip_id[row.trip_id]][row.trip_id].append(
+        routes[route_id_by_trip_id[row.trip_id]][row.trip_id].append((
+            row.stop_sequence,
             Stop(
                 station=stations_by_id[row.stop_id],
                 time=StopTime(data_timestamp + arrival, data_timestamp + departure)
             )
-        )
+        ))
 
     del stations_by_id
     del stop_times_csv
+
+    print('Sorting and converting stop times...')
+    for trips in routes.values():
+        for stops in trips.values():
+            stops.sort(key=lambda stop_data: stop_data[0])  # Sorting by stop_sequence
+
+            for i, stop in enumerate(stops):  # Removing stop_sequence
+                stops[i] = stop[1]
 
     if DEBUG:
         print('Checking stop times...')  # Checking departure and arrival time consistency
