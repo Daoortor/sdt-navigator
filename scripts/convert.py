@@ -3,7 +3,7 @@ from datetime import date
 import sys
 import os
 
-assert sys.version_info >= (3, 11), 'Python 3.11 or later required'
+assert sys.version_info >= (3, 11), f'Python 3.11 or later required, got {".".join(map(str, sys.version_info))}'
 
 from src.utils import mkpath_root
 from src.convert_transfers import convert_transfers
@@ -14,7 +14,7 @@ from txt_to_csv import txt_to_csv
 
 cities = [
     # ('rome', date(2020, 3, 24)),  # GTFS data date: 24 March 2020
-    # ('paris', date(2021, 3, 25)),  # GTFS data date: 25 March 2021
+    ('paris', date(2021, 3, 25)),  # GTFS data date: 25 March 2021
     ('hamburg', date(2020, 3, 20))  # GTFS data date: 20 March 2020
 ]
 

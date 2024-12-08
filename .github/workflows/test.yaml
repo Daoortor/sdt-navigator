@@ -15,10 +15,20 @@ jobs:
         with:
           submodules: true
 
-      - name: Install dependencies
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+          cache: pip
+
+      - name: Install Python dependencies
+        run: |
+          pip install -r scripts/requirements.txt
+
+      - name: Install C++ dependencies
         run: |
           sudo apt update
-          sudo apt install qt6-base-dev
+          sudo apt install cmake qt6-base-dev
 
       - name: Compile C++
         run: |
