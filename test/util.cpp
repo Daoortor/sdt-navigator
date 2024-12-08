@@ -1,5 +1,7 @@
 #include "util.h"
 
+#include <iostream>
+
 #include "../core/include/pathfinder.h"
 
 namespace sdtmaps::test {
@@ -34,6 +36,7 @@ void TestCase::check() const {
     auto j = pathfind(transportSystem, startId, endId, startTime);
     assert(j.has_value());
     SimplifiedJourney actual = SimplifiedJourney(j.value());
+    std::cout << j.value();
     assert(expected == actual);
 }
 

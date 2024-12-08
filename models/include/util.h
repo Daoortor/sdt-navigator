@@ -1,9 +1,11 @@
-#ifndef STOPTIME_H
-#define STOPTIME_H
+#ifndef MODELS_UTIL_H
+#define MODELS_UTIL_H
 
 #include <variant>
 #include <QTime>
 #include <QString>
+
+#include "../../lib/better-enums/enum.h"
 
 namespace sdtmaps {
 
@@ -49,7 +51,12 @@ struct Stop {
     int routeCount;
 };
 
+BETTER_ENUM(RouteType, int, TRAM = 0, SUBWAY = 1, RAIL = 2, BUS = 3, FERRY = 4, CABLE_TRAM = 5, AERIAL_LIFT = 6,
+    FUNICULAR = 7, TROLLEYBUS = 11, MONORAIL = 12);
+
 struct Route {
+    QString name;
+    RouteType type;
     int tripCount;
     int stopCount;
     StopTime *stopTimes; // pointer to TransportSystem.stopTimes[i]
@@ -74,15 +81,24 @@ struct Ride {
     [[nodiscard]] DateTime endTime() const;
 };
 
-typedef std::vector<std::variant<Transfer, Ride>> Journey;
+struct Journey : std::vector<std::variant<Transfer, Ride>> {
+    const Stop *source;
+    const Stop *target;
+    DateTime startTime{};
+    DateTime arrivalTime{};
 
-// template <typename T>
-// QString to_string(const T& value) {
-//     std::ostringstream ss;
-//     ss << value;
-//     return {ss.str().c_str()};
-// }
+    friend std::ostream &operator<<(std::ostream &os, const Journey &journey);
+};
+
+template<typename T>
+std::string to_string(const T &value) {
+    std::stringstream ss;
+    ss << value;
+    return ss.str();
+}
+
+std::ostream& operator<<(std::ostream& os, const Journey &journey);
 
 }
 
-#endif //STOPTIME_H
+#endif // MODELS_UTIL_H

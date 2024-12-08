@@ -81,6 +81,9 @@ TransportSystem::TransportSystem(const QDir &sourceDir) {
         }
 
         routes.emplace_back(
+            // TODO(change this to actual name and mode)
+            "Unknown",
+            RouteType::BUS,
             static_cast<int>(routeData[1].Size()),
             static_cast<int>(routeData[0].Size()),
             nullptr,

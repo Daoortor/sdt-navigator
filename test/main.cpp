@@ -24,7 +24,7 @@ TEST_CASE("Minsk subway") {
                 {
                     {JourneyElementType::RIDE, "113", "114"}
                 },
-                QDateTime(minskSubwayDate, QTime(4, 05))
+                QDateTime(minskSubwayDate, QTime(4, 20))
         }).check();
     }
 
@@ -94,7 +94,7 @@ TEST_CASE("Paris") {
                     {JourneyElementType::RIDE, "1967", "1996"},
                     {JourneyElementType::RIDE, "1996", "1781"},
                 },
-                QDateTime(parisDate, QTime(8, 35))
+                QDateTime(parisDate, QTime(8, 39))
             }
         ).check();
     }

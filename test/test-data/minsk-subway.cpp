@@ -45,12 +45,12 @@ TransportSystem makeMinskSubway() {
         {"Yubileynaya Ploshcha", "316", &subway.transfers[5], &subway.stopRoutes[40], 2}, // 20
     };
     subway.routes = {
-        {23, 10, &subway.stopTimes[0], &subway.routeStops[0]},
-        {23, 10, &subway.stopTimes[230], &subway.routeStops[10]},
-        {23, 7, &subway.stopTimes[460], &subway.routeStops[20]},
-        {23, 7, &subway.stopTimes[621], &subway.routeStops[27]},
-        {23, 4, &subway.stopTimes[782], &subway.routeStops[34]},
-        {23, 4, &subway.stopTimes[874], &subway.routeStops[38]},
+        {"L1", RouteType::SUBWAY, 23, 10, &subway.stopTimes[0], &subway.routeStops[0]},
+        {"L1", RouteType::SUBWAY, 23, 10, &subway.stopTimes[230], &subway.routeStops[10]},
+        {"L2", RouteType::SUBWAY, 23, 7, &subway.stopTimes[460], &subway.routeStops[20]},
+        {"L2", RouteType::SUBWAY, 23, 7, &subway.stopTimes[621], &subway.routeStops[27]},
+        {"L3", RouteType::SUBWAY, 23, 4, &subway.stopTimes[782], &subway.routeStops[34]},
+        {"L3", RouteType::SUBWAY, 23, 4, &subway.stopTimes[874], &subway.routeStops[38]},
     };
     subway.stopRoutes = {
         {&subway.routes[0], &subway.routeStops[0]}, {&subway.routes[1], &subway.routeStops[19]},

@@ -85,7 +85,7 @@ std::optional<Journey> pathfind(const TransportSystem &transportSystem, const QS
                                 routeToRelax,
                                 boardedStop,
                                 currentStop,
-                                currentTrip,
+                                currentTrip + (boardedStop - routeToRelax->stops),
                             }
                         };
                         isMarked[currentStopIndexInStops] = true;
@@ -116,20 +116,27 @@ std::optional<Journey> pathfind(const TransportSystem &transportSystem, const QS
     }
     // Restore journey path using backtracking
     Journey result;
+    result.source = source;
+    result.target = target;
     Stop *cur = const_cast<Stop *>(target);
+    result.arrivalTime = curLayer[targetIndex].optimalTime;
+    DateTime currentTime = result.arrivalTime;
     while (cur != source) {
         size_t curStopsIndex = cur - &*transportSystem.stops.begin();
         dpEntry curEntry = curLayer[curStopsIndex];
         if (curEntry.lastRide.route) {
             result.emplace_back(std::in_place_type_t<Ride>(), curEntry.lastRide);
             cur = *curEntry.lastRide.firstStop;
+            currentTime = curEntry.lastRide.startTime();
         } else if (curEntry.lastTransfer) {
             result.emplace_back(std::in_place_type_t<Transfer>(), *curEntry.lastTransfer);
             cur = curEntry.lastTransfer->start;
+            currentTime -= curEntry.lastTransfer->time;
         } else {
             return std::nullopt;
         }
     }
+    result.startTime = currentTime;
     std::ranges::reverse(result);
     return result;
 }
