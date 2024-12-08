@@ -1,5 +1,8 @@
-<h1 align="center">Multimodal Navigation System</h1>
-<h6 align="center">Final project for the Advanced Algorithms and Data Structures course at Constructor University</h6>
+<h1 align="center">SDT Navigator</h1>
+<h6 align="center">
+	<a href="https://docs.google.com/presentation/d/e/2PACX-1vQNlbyWFmbQOSK8aOKznbCmE7JXFppdAYH7fN8-1sdmeVfJIxTH9R3RguKPvG3DqfPTjmCuY1mOAvj4/pub">Final project for the Advanced Algorithms and Data Structures course at Constructor University</a>
+</h6>
+
 
 ## Setup
 
@@ -45,7 +48,7 @@ Running the project consists of two steps:
 2. TODO: ещё не понятно, что запускать
 <!-- 2. Now we run the main program:
 	```bash
-	./build/sdtmaps
+	./build/sdt-navigator
 	``` -->
 
 ## Testing

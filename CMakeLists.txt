@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.29)
-project(sdtmaps)
+project(sdt-navigator)
 
 add_definitions(-DPROJECT_ROOT_PATH="${CMAKE_SOURCE_DIR}")
 
@@ -34,20 +34,20 @@ include_directories(${CMAKE_SOURCE_DIR}/lib)
 FILE(GLOB Models models/src/*.cpp)
 
 # Main programm
-add_executable(sdtmaps ${Models} core/src/pathfinder.cpp app/main.cpp)
-target_link_libraries(sdtmaps
+add_executable(sdt-navigator ${Models} core/src/pathfinder.cpp app/main.cpp)
+target_link_libraries(sdt-navigator
         Qt::Core
         rapidjson
 )
 
 # Tests
-add_executable(sdtmaps_test
+add_executable(sdt-navigator_test
         ${Models}
         core/src/pathfinder.cpp
         test/main.cpp
         test/util.cpp
         test/test-data/minsk-subway.cpp)
-target_link_libraries(sdtmaps_test
+target_link_libraries(sdt-navigator_test
         Qt::Core
         rapidjson
         doctest
@@ -55,4 +55,4 @@ target_link_libraries(sdtmaps_test
 
 # CTest
 enable_testing()
-add_test(NAME test COMMAND sdtmaps_test)
+add_test(NAME test COMMAND sdt-navigator_test)
