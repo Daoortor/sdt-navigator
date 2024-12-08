@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 
 from src.utils import mkpath, dump_json
 from src.grammar import prettify_names
@@ -15,6 +16,7 @@ STATIONS_COLUMNS = {
 
 
 def convert_stations(raw_data_path: str, data_path: str):
+    DEBUG = (os.environ.get('_CONVERTER_DEBUG') == '1')
     print('Converting stations...')
 
     print('Reading stops.csv...')
@@ -51,10 +53,11 @@ def convert_stations(raw_data_path: str, data_path: str):
         )
         stations_ids.add(row.stop_id)
 
-    # Checking: all parent_station stop ids should be stored
-    for row in stops_csv.itertuples(index=False):
-        if row.parent_station:
-            assert stations_id_map.get(row.parent_station, row.parent_station) in stations_ids, f'Parent station not found: {row.parent_station}'
+    if DEBUG:
+        # Checking: all parent_station stop ids should be stored
+        for row in stops_csv.itertuples(index=False):
+            if row.parent_station:
+                assert stations_id_map.get(row.parent_station, row.parent_station) in stations_ids, f'Parent station not found: {row.parent_station}'
 
     stations: list[Station] = sorted(stations_by_name.values())
 

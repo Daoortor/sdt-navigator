@@ -17,6 +17,7 @@ TRANSFERS_COLUMNS = {
 
 
 def convert_transfers(raw_data_path: str, data_path: str):
+    DEBUG = (os.environ.get('_CONVERTER_DEBUG') == '1')
     print('Converting transfers...')
 
     if not os.path.isfile(mkpath(raw_data_path, 'transfers.csv')):
@@ -49,7 +50,8 @@ def convert_transfers(raw_data_path: str, data_path: str):
         if row.transfer_type != 2:
             continue
 
-        assert row.min_transfer_time is not None, f'Missing min_transfer_time for transfer {row}'
+        if DEBUG:
+            assert row.min_transfer_time is not None, f'Missing min_transfer_time for transfer {row}'
 
         if row.from_stop_id not in stations_by_id:
             print(f'Stop {row.from_stop_id} not found')

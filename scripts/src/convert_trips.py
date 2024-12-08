@@ -30,6 +30,7 @@ STOP_TIMES_COLUMNS = {
 
 
 def convert_trips(raw_data_path: str, data_path: str, data_date: date):
+    DEBUG = (os.environ.get('_CONVERTER_DEBUG') == '1')
     data_timestamp = int(datetime.combine(data_date, time(0, 0)).timestamp())
     print('Converting trips...')
 
@@ -99,15 +100,16 @@ def convert_trips(raw_data_path: str, data_path: str, data_date: date):
     del stations_by_id
     del stop_times_csv
 
-    print('Checking stop times...')  # Checking departure and arrival time consistency
-    for trips in routes.values():
-        for stops in trips.values():
-            for i in range(1, len(stops)):
-                assert stops[i - 1].time.departure_time <= stops[i].time.arrival_time, (
-                    f'Stop {stops[i - 1].station.id}/{stops[i - 1].station.name} ({stops[i - 1].time.departure_time}) '
-                    f'and stop {stops[i].station.id}/{stops[i].station.name} ({stops[i].time.arrival_time}) '
-                    f'are not in the correct order in trip {row.trip_id}'
-                )
+    if DEBUG:
+        print('Checking stop times...')  # Checking departure and arrival time consistency
+        for trips in routes.values():
+            for stops in trips.values():
+                for i in range(1, len(stops)):
+                    assert stops[i - 1].time.departure_time <= stops[i].time.arrival_time, (
+                        f'Stop {stops[i - 1].station.id}/{stops[i - 1].station.name} ({stops[i - 1].time.departure_time}) '
+                        f'and stop {stops[i].station.id}/{stops[i].station.name} ({stops[i].time.arrival_time}) '
+                        f'are not in the correct order in trip {row.trip_id}'
+                    )
 
     print('Reading routes.csv...')
     routes_csv = pd.read_csv(
@@ -134,9 +136,7 @@ def convert_trips(raw_data_path: str, data_path: str, data_date: date):
         if route_type == 109:
             route_type = 2
 
-        if route_type not in (0, 1, 2, 3, 4, 5, 6, 7, 11, 12):
-            print(f'Route {row.route_id} has unknown type {route_type}')
-            exit()
+        assert route_type in (0, 1, 2, 3, 4, 5, 6, 7, 11, 12), f'Route {row.route_id} has unknown type {route_type}'
 
         route_data_by_id[row.route_id] = (route_name, route_type)
 

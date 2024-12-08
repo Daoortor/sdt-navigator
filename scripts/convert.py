@@ -12,13 +12,23 @@ from src.convert_trips import convert_trips
 from txt_to_csv import txt_to_csv
 
 
+# ====================================================== Settings ======================================================
+
+DEBUG = True
+
 cities = [
     ('hamburg', date(2020, 3, 20)),  # GTFS data date: 20 March 2020
     # ('rome', date(2020, 3, 24)),  # GTFS data date: 24 March 2020
     ('paris', date(2021, 3, 25))  # GTFS data date: 25 March 2021
 ]
 
+# ====================================================== Settings ======================================================
+
 if __name__ == '__main__':
+
+    if DEBUG:
+        os.environ['_CONVERTER_DEBUG'] = '1'
+
     archives = []
     for filename in os.listdir(mkpath_root('data/raw')):
         file_path = mkpath_root('data/raw', filename)

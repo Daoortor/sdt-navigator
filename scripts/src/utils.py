@@ -60,6 +60,8 @@ def cursom_json_decoder(result: TextIO, obj, indent_depth=0, current_indent=0) -
 
 
 def dump_json(data, path: str, indent_depth=float('inf')):
+    DEBUG = (os.environ.get('_CONVERTER_DEBUG') == '1')
+
     filename = os.path.basename(path)
     filename_pretty = os.path.splitext(filename)[0] + '.pretty.json'
 
@@ -71,10 +73,11 @@ def dump_json(data, path: str, indent_depth=float('inf')):
         file.write(orjson.dumps(data, default=_orjson_default))
         # file.write(cursom_json_decoder(data, indent_depth))
 
-    # print('Writing pretty file...')
-    with open(mkpath(os.path.dirname(path), filename_pretty), 'w', encoding='utf-8') as file:
-        # json.dump(data, file, ensure_ascii=False, indent='\t')
-        cursom_json_decoder(file, data, indent_depth)
+    if DEBUG:
+        # print('Writing pretty file...')
+        with open(mkpath(os.path.dirname(path), filename_pretty), 'w', encoding='utf-8') as file:
+            # json.dump(data, file, ensure_ascii=False, indent='\t')
+            cursom_json_decoder(file, data, indent_depth)
 
 
 if __name__ == '__main__':  # Tests
