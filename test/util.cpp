@@ -32,13 +32,27 @@ SimplifiedJourney::SimplifiedJourney(const Journey &journey) {
     arrivalTime = currentTime;
 }
 
+QTextStream &operator<<(QTextStream &os, const SimplifiedJourney &journey) {
+    os << "\n\n";
+    for (auto &element : journey.elements) {
+        os << element.type._to_string() << " " << element.startId << " -> " << element.endId << "\n";
+    }
+    os << "Arrival time: " << journey.arrivalTime << "\n";
+    return os;
+}
+
+
 void TestCase::check() const {
     auto j = pathfind(transportSystem, startId, endId, startTime);
     assert(j.has_value());
     SimplifiedJourney actual = SimplifiedJourney(j.value());
     QTextStream cout(stdout, QIODevice::WriteOnly);
     cout << j.value();
-    assert(expected == actual);
+    if (expected != actual) {
+        cout << "expected " << expected << " but got " << actual;
+        Qt::endl(cout);
+        assert(expected == actual);
+    }
 }
 
 }

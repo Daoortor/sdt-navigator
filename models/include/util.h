@@ -28,7 +28,7 @@ public:
     DateTime &operator+=(int other);
     DateTime &operator-=(int other);
 
-    friend std::ostream& operator<<(std::ostream& os, const DateTime &dt);
+    friend QTextStream& operator<<(QTextStream& os, const DateTime &dt);
 
 private:
     long long timestamp;
@@ -85,7 +85,7 @@ struct Journey : std::vector<std::variant<Transfer, Ride>> {
     DateTime startTime{};
     DateTime arrivalTime{};
 
-    friend std::ostream &operator<<(std::ostream &os, const Journey &journey);
+    friend QTextStream &operator<<(QTextStream &os, const Journey &journey);
 };
 
 template<typename T>
@@ -95,7 +95,7 @@ std::string to_string(const T &value) {
     return ss.str();
 }
 
-std::ostream& operator<<(std::ostream& os, const Journey &journey);
+QTextStream& operator<<(QTextStream& os, const Journey &journey);
 
 }
 

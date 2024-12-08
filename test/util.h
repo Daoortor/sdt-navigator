@@ -9,13 +9,10 @@
 
 namespace sdtmaps::test {
 
-enum class JourneyElementType {
-    RIDE,
-    TRANSFER
-};
+BETTER_ENUM(JourneyElementType, int, RIDE, TRANSFER);
 
 struct SimplifiedJourneyElement {
-    JourneyElementType type{};
+    JourneyElementType type = JourneyElementType::RIDE;
     QString startId;
     QString endId;
 
@@ -32,7 +29,11 @@ struct SimplifiedJourney {
     SimplifiedJourney(const std::vector<SimplifiedJourneyElement> &elements, const DateTime &arrivalTime): elements(elements), arrivalTime(arrivalTime) {};
 
     bool operator==(const SimplifiedJourney &other) const = default;
+    friend QTextStream &operator<<(QTextStream &os, const SimplifiedJourney &journey);
 };
+
+QTextStream &operator<<(QTextStream &os, const SimplifiedJourney &journey);
+
 
 struct TestCase {
     TransportSystem &transportSystem;
