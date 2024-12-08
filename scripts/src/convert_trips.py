@@ -14,20 +14,18 @@ ROUTES_COLUMNS = {
     'route_id': str,
     'route_short_name': str,
     'route_long_name': str,
-    # 'route_type': 'int8'
-    'route_type': int
+    'route_type': 'int32'
 }
 TRIPS_COLUMNS = {
     'route_id': str,
-    'trip_id': int
+    'trip_id': 'int64'
 }
 STOP_TIMES_COLUMNS = {
-    'trip_id': int,
+    'trip_id': 'int64',
     'stop_id': str,
     'arrival_time': str,
     'departure_time': str,
-    # 'stop_sequence': 'int8'
-    'stop_sequence': int
+    'stop_sequence': 'int32'
 }
 
 
