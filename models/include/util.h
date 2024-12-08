@@ -6,7 +6,7 @@
 #include <QString>
 #include <sstream>
 
-#include "better-enums/enum.h"
+#include "../../lib/better-enums/enum.h"
 
 namespace sdtmaps {
 
@@ -52,22 +52,9 @@ struct Stop {
     int routeCount;
 };
 
-BETTER_ENUM(RouteType, int,
-    TRAM = 0,
-    SUBWAY = 1,
-    RAIL = 2,
-    BUS = 3,
-    FERRY = 4,
-    CABLE_TRAM = 5,
-    AERIAL_LIFT = 6,
-    FUNICULAR = 7,
-    TROLLEYBUS = 11,
-    MONORAIL = 12
-);
-
 struct Route {
     QString name;
-    RouteType type;
+    int type; // route_type according to GTFS
     int tripCount;
     int stopCount;
     StopTime *stopTimes; // pointer to TransportSystem.stopTimes[i]

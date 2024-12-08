@@ -82,7 +82,7 @@ TransportSystem::TransportSystem(const QDir &sourceDir) {
 
         routes.emplace_back(
             routeData[0].GetString(),
-            RouteType::_from_integral(routeData[1].GetInt()),
+            routeData[1].GetInt(),
             static_cast<int>(routeData[3].Size()),
             static_cast<int>(routeData[2].Size()),
             nullptr,

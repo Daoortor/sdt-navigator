@@ -33,10 +33,11 @@ SimplifiedJourney::SimplifiedJourney(const Journey &journey) {
 }
 
 void TestCase::check() const {
-    auto journey = pathfind(transportSystem, startId, endId, startTime);
-    assert(journey.has_value());
-    SimplifiedJourney actual = SimplifiedJourney(journey.value());
-    std::cout << journey.value();
+    auto j = pathfind(transportSystem, startId, endId, startTime);
+    assert(j.has_value());
+    SimplifiedJourney actual = SimplifiedJourney(j.value());
+    QTextStream cout(stdout, QIODevice::WriteOnly);
+    cout << j.value();
     assert(expected == actual);
 }
 
