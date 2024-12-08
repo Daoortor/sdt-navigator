@@ -11,8 +11,8 @@ from src.utils import mkpath, dump_json
 TRANSFERS_COLUMNS = {
     'from_stop_id': str,
     'to_stop_id': str,
-    'transfer_type': int,
-    'min_transfer_time': 'Int64'
+    'transfer_type': 'int8',
+    'min_transfer_time': 'Int32'
 }
 
 
@@ -38,7 +38,6 @@ def convert_transfers(raw_data_path: str, data_path: str):
     print('Reading transfers.csv...')
     transfers_csv = pd.read_csv(
         mkpath(raw_data_path, 'transfers.csv'),
-        keep_default_na=False,
         usecols=tuple(TRANSFERS_COLUMNS.keys()),
         dtype=TRANSFERS_COLUMNS,
         na_filter=False

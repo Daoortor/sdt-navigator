@@ -20,7 +20,6 @@ def convert_stations(raw_data_path: str, data_path: str):
     print('Reading stops.csv...')
     stops_csv = pd.read_csv(
         mkpath(raw_data_path, 'stops.csv'),
-        keep_default_na=False,
         usecols=tuple(STATIONS_COLUMNS.keys()),
         dtype=STATIONS_COLUMNS,
         na_filter=False
