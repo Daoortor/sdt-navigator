@@ -1,8 +1,8 @@
 import pandas as pd
 
-from src.ts_types import Station
-from src.grammar import prettify_names
 from src.utils import mkpath, dump_json
+from src.grammar import prettify_names
+from src.ts_types import Station
 
 
 STATIONS_COLUMNS = {

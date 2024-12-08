@@ -22,6 +22,8 @@ Trip = NewType('Trip', list[StopTime])
 
 
 class Route(NamedTuple):
+    route_name: str
+    route_type: int
     station_ids: list[str]
     trips: list[Trip]
 

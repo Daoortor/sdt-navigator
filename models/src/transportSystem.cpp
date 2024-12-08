@@ -64,14 +64,14 @@ TransportSystem::TransportSystem(const QDir &sourceDir) {
     cout << "Loading routes (" << jsonTrips.Size() << ")..." << endl;
     for (auto &routeData : jsonTrips.GetArray()) {
         size_t firstAddedStop = routeStops.size();
-        routeStops.reserve(routeStops.size() + routeData[0].Size());
-        for (auto &stop_id : routeData[0].GetArray()) {
+        routeStops.reserve(routeStops.size() + routeData[2].Size());
+        for (auto &stop_id : routeData[2].GetArray()) {
             routeStops.push_back(stopById[QString::fromUtf8(stop_id.GetString())]);
         }
 
         size_t firstAddedStopTime = stopTimes.size();
         // Not reserving space for stopTimes, because it's complicated and won't save much time anyway
-        for (auto &trip : routeData[1].GetArray()) {
+        for (auto &trip : routeData[3].GetArray()) {
             for (auto &stopTimeData : trip.GetArray()) {
                 stopTimes.emplace_back(
                     stopTimeData[0].GetInt64(),
@@ -81,11 +81,10 @@ TransportSystem::TransportSystem(const QDir &sourceDir) {
         }
 
         routes.emplace_back(
-            // TODO(change this to actual name and mode)
-            "Unknown",
-            RouteType::BUS,
-            static_cast<int>(routeData[1].Size()),
-            static_cast<int>(routeData[0].Size()),
+            routeData[0].GetString(),
+            RouteType::_from_integral(routeData[1].GetInt()),
+            static_cast<int>(routeData[3].Size()),
+            static_cast<int>(routeData[2].Size()),
             nullptr,
             nullptr
         );
@@ -102,7 +101,7 @@ TransportSystem::TransportSystem(const QDir &sourceDir) {
     for (auto &[route, firstAddedStop] : routeStopsIndexByRoute) {
         route->stops = &routeStops[firstAddedStop];  // `routeStops` has its size finalized
     }
-    
+
     map<Stop *, size_t> stopRoutesIndexByStop;
     cout << "Assigning routes to stops..." << endl;
     for (auto &[stop, curStopRoutes] : routesByStop) {
@@ -117,7 +116,7 @@ TransportSystem::TransportSystem(const QDir &sourceDir) {
         stop->routes = &stopRoutes[firstAddedRoute];  // `stopRoutes` has its size finalized
     }
     cout << "Routes loaded" << endl;
-    
+
     map<Stop *, vector<Transfer>> transfersByStop;
     cout << "Loading transfers (" << jsonTransfers.Size() << ")..." << endl;
     for (auto &transferData : jsonTransfers.GetArray()) {
@@ -139,7 +138,7 @@ TransportSystem::TransportSystem(const QDir &sourceDir) {
         stop->transfers = &transfers[firstAddedTransfer];  // `transfers` has its size finalized
     }
     cout << "Transfers loaded" << endl;
-    
+
     cout << "Final modifications..." << endl;
     for (auto &stop : stops) {
         if (stop.transfers == nullptr) {
