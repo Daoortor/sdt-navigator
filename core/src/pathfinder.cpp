@@ -66,13 +66,6 @@ std::optional<Journey> pathfind(const TransportSystem &transportSystem, const QS
                     boardedStop = currentStop;
                 }
                 if (currentTrip) {
-                    // Switch to previous trip while we can
-                    while (currentTrip != routeToRelax->stopTimes &&
-                            prevLayer[currentStopIndexInStops].optimalTime <=
-                            (currentTrip - routeToRelax->stopCount + currentStopIndexInRoute)->departureTime) {
-                        currentTrip -= routeToRelax->stopCount;
-                        boardedStop = currentStop;
-                    }
                     StopTime *currentStopTime = currentTrip + currentStopIndexInRoute;
                     dpEntry *currentStopOpt = &prevLayer[currentStopIndexInStops];
                     dpEntry *targetOpt = &prevLayer[targetIndex];
@@ -89,6 +82,13 @@ std::optional<Journey> pathfind(const TransportSystem &transportSystem, const QS
                             }
                         };
                         isMarked[currentStopIndexInStops] = true;
+                    }
+                    // Switch to previous trip while we can
+                    while (currentTrip != routeToRelax->stopTimes &&
+                            prevLayer[currentStopIndexInStops].optimalTime <=
+                            (currentTrip - routeToRelax->stopCount + currentStopIndexInRoute)->departureTime) {
+                        currentTrip -= routeToRelax->stopCount;
+                        boardedStop = currentStop;
                     }
                 }
             }
