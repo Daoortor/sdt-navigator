@@ -3,14 +3,14 @@ from datetime import date
 import sys
 import os
 
+assert sys.version_info >= (3, 11), 'Python 3.11 or later required'
+
 from src.utils import mkpath_root
 from src.convert_transfers import convert_transfers
 from src.convert_stations import convert_stations
 from src.convert_trips import convert_trips
 from txt_to_csv import txt_to_csv
 
-
-assert sys.version_info >= (3, 11), 'Python 3.11 or later required'
 
 cities = [
     # ('rome', date(2020, 3, 24)),  # GTFS data date: 24 March 2020

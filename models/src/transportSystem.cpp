@@ -13,14 +13,18 @@ namespace sdtmaps {
 namespace details {
 
 Document parseJsonFile(const QString &filename) {
-    FILE* fp = fopen(filename.toUtf8().constData(), "r");
+    FILE* file = fopen(filename.toUtf8().constData(), "r");
+    if (!file) {
+        throw runtime_error("Failed to open JSON file " + filename.toStdString());
+    }
+
     char readBuffer[65536];
-    FileReadStream is(fp, readBuffer, sizeof(readBuffer));
+    FileReadStream is(file, readBuffer, sizeof(readBuffer));
     
     Document document;
     document.ParseStream(is);
     
-    fclose(fp);
+    fclose(file);
    
     if (document.HasParseError()) {
         throw runtime_error("Failed to parse JSON file " + filename.toStdString());

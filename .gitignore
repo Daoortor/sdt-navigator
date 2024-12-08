@@ -37,6 +37,7 @@ __pycache__/
 # JetBrains
 /.idea/
 
-# CMake
+# CMake & CTest
 /build/
 cmake-build-debug/
+/Testing/

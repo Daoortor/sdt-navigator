@@ -39,7 +39,7 @@ Running the project consists of two steps:
 
 1. First we need to prepare the data:
 	```bash
-	python scripts/convert.py
+	python3 scripts/convert.py
 	```
 
 2. TODO: ещё не понятно, что запускать
