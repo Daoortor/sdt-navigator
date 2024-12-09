@@ -38,18 +38,40 @@ cmake --build build --parallel
 
 ## Running
 
-Running the project consists of two steps:
+Running the project consists of three steps:
 
 1. First we need to prepare the data:
 	```bash
 	python3 scripts/convert.py
 	```
 
-2. TODO: ещё не понятно, что запускать
-<!-- 2. Now we run the main program:
+2. We can now choose a city from the `data` folder and run the program. For example, let's choose Hamburg (GTFS folder: `data/gtfs_hamburg`):
 	```bash
-	./build/sdt-navigator
-	``` -->
+	./build/sdt-navigator gtfs_hamburg
+	```
+
+3. When the application is loaded, we can search for routes between two stops. For example, let's find a route between the "Bremen Hbf" and "Hamburg Airport (Flughafen)":
+	```bash
+	$ ./build/sdt-navigator gtfs_hamburg
+	Loading transport system from directory "gtfs_hamburg"...
+	Transport system loaded
+
+	[SDT Navigator]$ route --start "Bremen Hbf" --end "Hamburg Airport (Flughafen)" --date 2024-03-20 --time 6:00
+	Journey from Bremen Hbf to Hamburg Airport (Flughafen)
+	Fri Mar 20 00:15:00 2020 - Fri Mar 20 04:09:00 2020
+
+	RAIL RB41
+	Bremen Hbf -> Hamburg Hbf
+	Fri Mar 20 00:15:00 2020 - Fri Mar 20 01:44:00 2020
+
+	RAIL S1
+	Hamburg Hbf -> Sülldorf
+	Fri Mar 20 02:38:00 2020 - Fri Mar 20 03:11:00 2020
+
+	RAIL S1
+	Sülldorf -> Hamburg Airport (Flughafen)
+	Fri Mar 20 03:11:00 2020 - Fri Mar 20 04:09:00 2020
+	```
 
 ## Testing
 
@@ -62,7 +84,7 @@ Tests are [automatically run by GitHub Actions](../../actions). To run them loca
 
 2. Run the tests:
 	```bash
-	ctest -V --output-on-failure
+	ctest --test-dir build -V --output-on-failure
 	```
 
 ## License

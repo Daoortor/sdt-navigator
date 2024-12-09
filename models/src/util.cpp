@@ -65,7 +65,7 @@ DateTime Ride::endTime() const {
 }
 
 std::map<int, QString> routeTypeNames = {
-{0, "TRAM"},
+    {0, "TRAM"},
     {1, "SUBWAY"},
     {2, "RAIL"},
     {3, "BUS"},

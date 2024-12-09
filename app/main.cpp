@@ -60,7 +60,7 @@ void handleRouteCommand(const sdtmaps::TransportSystem &transportSystem, std::ve
 
 int main(int argc, char** argv) {
     QCoreApplication app(argc, argv);
-    QCoreApplication::setApplicationName("MNS");
+    QCoreApplication::setApplicationName("SDT Navigator");
     QCoreApplication::setApplicationVersion("1.0");
     QCommandLineParser parser;
     parser.addVersionOption();
@@ -85,7 +85,7 @@ int main(int argc, char** argv) {
     }
 
     std::string input;
-    cout << "[" + QCoreApplication::applicationName() + "]$ " << Qt::flush;
+    cout << "\n[" + QCoreApplication::applicationName() + "]$ " << Qt::flush;
     while (std::getline(std::cin, input)) {
         std::vector<std::string> args = CLI::detail::split_up(input);
         if (args.empty()) {

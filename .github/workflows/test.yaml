@@ -40,6 +40,5 @@ jobs:
           python3 scripts/convert.py
 
       - name: Run tests
-        working-directory: build
         run: |
-          ctest -V --output-on-failure
+          ctest --test-dir build -V --output-on-failure

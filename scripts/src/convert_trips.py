@@ -131,13 +131,7 @@ def convert_trips(raw_data_path: str, data_path: str, data_date: date):
             route_name = ''
             print(f'Route {row.route_id} has no name')
 
-        route_type = row.route_type
-        if route_type == 109:
-            route_type = 2
-
-        assert route_type in (0, 1, 2, 3, 4, 5, 6, 7, 11, 12), f'Route {row.route_id} has unknown type {route_type}'
-
-        route_data_by_id[row.route_id] = (route_name, route_type)
+        route_data_by_id[row.route_id] = (route_name, row.route_type)
 
     print(f'Splitting similar trips in each route...')
 
