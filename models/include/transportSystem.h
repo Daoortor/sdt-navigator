@@ -5,6 +5,8 @@
 #include <vector>
 #include <QDir>
 
+#include "../../core/include/substring-finder.h"
+
 namespace sdtmaps {
 
 struct TransportSystem {
@@ -16,17 +18,19 @@ struct TransportSystem {
     std::vector<std::pair<Route *, Stop **>> stopRoutes; // Routes passing through each stop, each together with corresponding routeStops entry
     std::map<QString, Stop *> stopById;
     std::map<QString, Stop *> stopByName;
+    SuffixAutomaton stopNamesAutomaton;
 
     TransportSystem() = default;
     // Construct a transport system from JSON data
     explicit TransportSystem(const QDir &sourceDir);
+    void initStopNamesAutomaton();
     // Check if all pointers point inside corresponding containers
     [[nodiscard]] bool isValid() const;
     [[nodiscard]] const Stop *getStopById(const QString &stopId) const;
-    // Find stop by name (to be optimized w/search structures)
+    // Find stop by name
     [[nodiscard]] const Stop *getStopByName(const QString &stopName) const;
-    // Find stops by substring (to be optimized w/search structures)
-    [[nodiscard]] std::vector<Stop *> getStopsBySubstring(const QString &substring) const;
+    // Find stops by substring, order by number of routes passing through (to be optimized w/search structures)
+    [[nodiscard]] std::vector<const Stop *> getStopsBySubstring(const QString &substring) const;
 };
 
 }

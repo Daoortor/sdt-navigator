@@ -32,9 +32,11 @@ target_include_directories(rapidjson INTERFACE ${CMAKE_SOURCE_DIR}/lib/rapidjson
 include_directories(${CMAKE_SOURCE_DIR}/lib)
 
 FILE(GLOB Models models/src/*.cpp)
+FILE(GLOB Core core/src/*.cpp)
+FILE(GLOB Test test/)
 
-# Main programm
-add_executable(sdt-navigator ${Models} core/src/pathfinder.cpp app/main.cpp)
+# Main program
+add_executable(sdt-navigator ${Models} ${Core} app/main.cpp)
 target_link_libraries(sdt-navigator
         Qt::Core
         rapidjson
@@ -43,7 +45,7 @@ target_link_libraries(sdt-navigator
 # Tests
 add_executable(sdt-navigator_test
         ${Models}
-        core/src/pathfinder.cpp
+        ${Core}
         test/main.cpp
         test/util.cpp
         test/test-data/minsk-subway.cpp)

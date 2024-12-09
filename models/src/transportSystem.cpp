@@ -149,8 +149,20 @@ TransportSystem::TransportSystem(const QDir &sourceDir) {
             // stop.routes = &*stopRoutes.end();
         }
     }
+    cout << "Building stops index..." << endl;
+    initStopNamesAutomaton();
     cout << "Transport system loaded" << endl;
 }
+
+void TransportSystem::initStopNamesAutomaton() {
+    std::vector<QString> stationNames;
+    stationNames.reserve(stops.size());
+    for (const auto &stop : stops) {
+        stationNames.push_back(stop.name);
+    }
+    stopNamesAutomaton = SuffixAutomaton(stationNames);
+}
+
 
 bool TransportSystem::isValid() const {
     bool routesAreValid = ranges::all_of(routes.begin(), routes.end(), [&](const Route &route) {
@@ -184,4 +196,18 @@ const Stop *TransportSystem::getStopByName(const QString &stopName) const {
     auto it = stopByName.find(stopName);
     return it == stopByName.end() ? nullptr : it->second;
 }
+
+std::vector<const Stop *> TransportSystem::getStopsBySubstring(const QString &substring) const {
+    std::vector<QString> stopNamesFound = stopNamesAutomaton.findAllStringsContaining(substring);
+    std::vector<const Stop *> stopsFound;
+    stopsFound.reserve(stopNamesFound.size());
+    for (const auto &stopName : stopNamesFound) {
+        stopsFound.push_back(getStopByName(stopName));
+    }
+    std::ranges::sort(stopsFound, [](const Stop *stop1, const Stop *stop2) {
+        return (stop1->routeCount == stop2->routeCount) ? stop1->name < stop2->name : stop1->routeCount > stop2->routeCount;
+    });
+    return stopsFound;
+}
+
 }
