@@ -6,8 +6,8 @@ namespace sdtmaps {
 
 std::optional<Journey> pathfind(const TransportSystem &transportSystem, const QString& sourceId, const QString& targetId, const DateTime &initDateTime
     , size_t maxChanges) {
-    const Stop *source = transportSystem.getStop(sourceId);
-    const Stop *target = transportSystem.getStop(targetId);
+    const Stop *source = transportSystem.getStopById(sourceId);
+    const Stop *target = transportSystem.getStopById(targetId);
     // If any of the stops was not found
     if (!source || !target) {
         return std::nullopt;

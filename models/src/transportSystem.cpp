@@ -175,7 +175,7 @@ bool TransportSystem::isValid() const {
     return routesAreValid && routeStopsAreValid && stopsAreValid && transfersAreValid && stopRoutesAreValid;
 }
 
-const Stop *TransportSystem::getStop(const QString &stopId) const {
+const Stop *TransportSystem::getStopById(const QString &stopId) const {
     for (auto &stop : stops) {
         if (stop.id == stopId) {
             return &stop;
@@ -183,5 +183,23 @@ const Stop *TransportSystem::getStop(const QString &stopId) const {
     }
     return nullptr;
 }
+
+const Stop *TransportSystem::getStopByName(const QString &stopName) const {
+    for (auto &stop : stops) {
+        if (stop.name == stopName) {
+            return &stop;
+        }
+    }
+    return nullptr;
+}
+
+QDate TransportSystem::getStartDate() const {
+    if (stopTimes.empty()) {
+        return {};
+    }
+    return stopTimes[0].arrivalTime.toQDateTime().date();
+}
+
+
 
 }

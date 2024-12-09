@@ -21,9 +21,12 @@ struct TransportSystem {
     // Check if all pointers point inside corresponding containers
     [[nodiscard]] bool isValid() const;
     // Find stop by id (to be optimized w/search structures)
-    [[nodiscard]] const Stop *getStop(const QString &stopId) const;
+    [[nodiscard]] const Stop *getStopById(const QString &stopId) const;
+    // Find stop by name (to be optimized w/search structures)
+    [[nodiscard]] const Stop *getStopByName(const QString &stopName) const;
     // Find stops by substring (to be optimized w/search structures)
     [[nodiscard]] std::vector<Stop *> getStopsBySubstring(const QString &substring) const;
+    [[nodiscard]] QDate getStartDate() const;
 };
 
 }

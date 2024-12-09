@@ -28,6 +28,8 @@ public:
     DateTime &operator+=(int other);
     DateTime &operator-=(int other);
 
+    [[nodiscard]] QDateTime toQDateTime() const;
+
     friend QTextStream& operator<<(QTextStream& os, const DateTime &dt);
 
 private:

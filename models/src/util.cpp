@@ -48,9 +48,12 @@ DateTime &DateTime::operator-=(int other) {
     return *this;
 }
 
+QDateTime DateTime::toQDateTime() const {
+    return QDateTime::fromSecsSinceEpoch(timestamp);
+}
+
 QTextStream& operator<<(QTextStream& os, const DateTime &dt) {
-    QDateTime QTdt = QDateTime::fromSecsSinceEpoch(dt.timestamp);
-    return os << QTdt.toString();
+    return os << dt.toQDateTime().toString();
 }
 
 DateTime Ride::startTime() const {
