@@ -154,6 +154,18 @@ TransportSystem::TransportSystem(const QDir &sourceDir) {
     cout << "Transport system loaded" << endl;
 }
 
+void TransportSystem::initStopById() {
+    for (auto &stop : stops) {
+        stopById[stop.id] = &stop;
+    }
+}
+
+void TransportSystem::initStopByName() {
+    for (auto &stop : stops) {
+        stopByName[stop.name] = &stop;
+    }
+}
+
 void TransportSystem::initStopNamesAutomaton() {
     std::vector<QString> stationNames;
     stationNames.reserve(stops.size());
@@ -162,7 +174,6 @@ void TransportSystem::initStopNamesAutomaton() {
     }
     stopNamesAutomaton = SuffixAutomaton(stationNames);
 }
-
 
 bool TransportSystem::isValid() const {
     bool routesAreValid = ranges::all_of(routes.begin(), routes.end(), [&](const Route &route) {

@@ -23,6 +23,8 @@ struct TransportSystem {
     TransportSystem() = default;
     // Construct a transport system from JSON data
     explicit TransportSystem(const QDir &sourceDir);
+    void initStopById();
+    void initStopByName();
     void initStopNamesAutomaton();
     // Check if all pointers point inside corresponding containers
     [[nodiscard]] bool isValid() const;

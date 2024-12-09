@@ -95,6 +95,9 @@ TransportSystem makeMinskSubway() {
         }
         start += route.tripCount * route.stopCount;
     }
+    subway.initStopById();
+    subway.initStopByName();
+    subway.initStopNamesAutomaton();
 
     return subway;
 }
