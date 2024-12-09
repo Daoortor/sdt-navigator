@@ -18,10 +18,10 @@ ROUTES_COLUMNS = {
 }
 TRIPS_COLUMNS = {
     'route_id': str,
-    'trip_id': 'int64'
+    'trip_id': str
 }
 STOP_TIMES_COLUMNS = {
-    'trip_id': 'int64',
+    'trip_id': str,
     'stop_id': str,
     'arrival_time': str,
     'departure_time': str,

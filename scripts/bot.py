@@ -16,6 +16,10 @@ bot = telebot.TeleBot(tg_token)
 SELECTED_DATASET = {}  # {user_id: dataset_name}
 
 
+def parse_message(message: str) -> str:
+    return message.replace('—', '--')
+
+
 def run_command(dataset: str, command: str) -> str:
     print(f'Running command: {command}')
     result = ""
@@ -98,6 +102,8 @@ def route_command(message):
         return start_message(message)
 
     user_input = message.text.strip().removeprefix('/')
+
+    user_input = parse_message(user_input)
 
     result = run_command(SELECTED_DATASET[message.chat.id], user_input)
 

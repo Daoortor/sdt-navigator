@@ -18,8 +18,9 @@ DEBUG = False
 
 cities = [
     ('hamburg', date(2020, 3, 20)),  # GTFS data date: 20 March 2020
-    # ('rome', date(2020, 3, 24)),  # GTFS data date: 24 March 2020
-    ('paris', date(2021, 3, 25))  # GTFS data date: 25 March 2021
+    ('milan', date(2021, 9, 8)),  # GTFS data date: 8 September 2021
+    ('paris', date(2021, 3, 25)),  # GTFS data date: 25 March 2021
+    ('stockholm', date(2020, 2, 24)),  # GTFS data date: 24 February 2020
 ]
 
 # ====================================================== Settings ======================================================
