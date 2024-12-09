@@ -1,0 +1,6 @@
+/select - Select a dataset
+/route - Input a route query to find the best route between two stations
+/search - Search a station by it's approximate name
+
+
+route --start "Bremen Hbf" --end "Hamburg Airport (Flughafen)" --date 2020-03-20 --time 06:00

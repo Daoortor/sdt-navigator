@@ -5,11 +5,11 @@ import os
 
 assert sys.version_info >= (3, 11), f'Python 3.11 or later required, got {".".join(map(str, sys.version_info))}'
 
-from src.utils import mkpath_root
 from src.convert_transfers import convert_transfers
 from src.convert_stations import convert_stations
 from src.convert_trips import convert_trips
 from txt_to_csv import txt_to_csv
+from src.utils import mkpath_root
 
 
 # ====================================================== Settings ======================================================

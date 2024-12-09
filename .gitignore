@@ -41,3 +41,6 @@ __pycache__/
 /build/
 cmake-build-debug/
 /Testing/
+
+# Telegram bot token
+/scripts/token.txt

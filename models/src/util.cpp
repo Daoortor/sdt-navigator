@@ -170,7 +170,7 @@ QTextStream& operator<<(QTextStream& os, const Journey &journey) {
             os << "\n";
             os << routeTypeNames[ride.route->type] << " " << ride.route->name << "\n";
             os << (*ride.firstStop)->name << " -> " << (*ride.lastStop)->name << "\n";
-            os << ride.startTime() << " - " << ride.endTime() << "\n";
+            os << ride.startTime() << " — " << ride.endTime() << "\n";
         } else {
             auto &transfer = std::get<Transfer>(journeyElement);
             os << "\n";

@@ -1,3 +1,4 @@
 orjson~=3.10.12
 pandas~=2.2.3
 pysimdjson~=6.0.2
+pyTelegramBotAPI~=4.25.0

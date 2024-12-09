@@ -36,7 +36,7 @@ cmake -DCMAKE_BUILD_TYPE=Release -S . -B build
 cmake --build build --parallel
 ```
 
-## Running
+## Running (CLI)
 
 Running the project consists of three steps:
 
@@ -72,6 +72,16 @@ Running the project consists of three steps:
 	Sülldorf -> Hamburg Airport (Flughafen)
 	Fri Mar 20 03:11:00 2020 - Fri Mar 20 04:09:00 2020
 	```
+
+## Telegram bot
+
+To run the Telegram bot, you need to create a `.token` file in the `telegram` folder and put your Telegram bot token there.
+
+After that, you can run the bot:
+```bash
+python3 telegram/bot.py
+```
+
 
 ## Testing
 
