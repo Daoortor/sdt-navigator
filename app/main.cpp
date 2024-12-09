@@ -15,9 +15,13 @@ const QString CLI_HELP_MESSAGE = R"(
 *********************************SDT-NAVIGATOR**********************************
 
 COMMANDS
+    find <substring>
+
+        Outputs all the stops in the dataset whose names contain <substring>. Stops are ordered by the number of routes passing through them.
+
     route --start <start-identifier> --end <end-identifier> [--date <date>] [--time <time>]
 
-        Outputs the fastest (by arrival time) journey in the given dataset from <start-identifier> to <end-identifier>, departing on <date> at <time>.
+        Outputs the fastest (by arrival time) journey in the dataset from <start-identifier> to <end-identifier>, departing on <date> at <time>.
 
         Arguments:
             start-identifier         ID or full name of the start station.
@@ -50,8 +54,8 @@ void handleRouteCommand(const sdtmaps::TransportSystem &transportSystem, std::ve
     CLI::App app{"route"};
     app.add_option("--start", startArg, "ID or full name of the start station")->required();
     app.add_option("--end", endArg, "ID or full name of the end station")->required();
-    app.add_option("--date", dateArg, "departure date in yyyy-mm-dd format; defaults to the first date in the schedule");
-    app.add_option("--time", timeArg, "departure time in h:mm format; defaults to 0:00");
+    app.add_option("--date", dateArg, "departure date in yyyy-MM-dd format; defaults to the first date in the schedule");
+    app.add_option("--time", timeArg, "departure time in HH:mm format; defaults to 00:00");
     try {
         app.parse(std::vector(args.begin(), args.end() - 1));
     } catch (const CLI::ParseError &e) {
@@ -68,29 +72,88 @@ void handleRouteCommand(const sdtmaps::TransportSystem &transportSystem, std::ve
         start = transportSystem.getStopByName(startArg.c_str());
     }
     if (!start) {
-        qDebug() << "Start station '" << startArg.c_str() << "' not found\n";
-        return;
+        std::vector <const sdtmaps::Stop *> findResult = transportSystem.getStopsBySubstring(startArg.c_str());
+        if (findResult.empty()) {
+            qDebug() << "Start station '" << startArg.c_str() << "' not found\n" << Qt::flush;
+            return;
+        }
+        start = findResult[0];
     }
     const sdtmaps::Stop *end = transportSystem.getStopById(endArg.c_str());
     if (!end) {
         end = transportSystem.getStopByName(endArg.c_str());
     }
     if (!end) {
-        qDebug() << "End station '" << endArg.c_str() << "' not found\n";
+        std::vector <const sdtmaps::Stop *> findResult = transportSystem.getStopsBySubstring(endArg.c_str());
+        if (findResult.empty()) {
+            qDebug() << "Destination station '" << endArg.c_str() << "' not found\n" << Qt::flush;
+            return;
+        }
+        end = findResult[0];
+    }
+
+    QDate initDate = dateArg.empty() ? QDate::fromJulianDay(0) : QDate::fromString(dateArg.c_str(), "yyyy-MM-dd");
+    if (!initDate.isValid()) {
+        qDebug() << "Invalid date format: " << dateArg.c_str() << ". Should be yyyy-MM-dd." << Qt::flush;
         return;
     }
-    QDate initDate = dateArg.empty() ? QDate::fromJulianDay(0) : QDate::fromString(dateArg.c_str(), "yyyy-mm-dd");
-    QTime initTime = timeArg.empty() ? QTime(0, 0) : QTime::fromString(dateArg.c_str(), "h:mm");
-    std::optional<sdtmaps::Journey> result = pathfind(transportSystem, start->id, end->id, QDateTime(initDate, initTime));
+    QTime initTime = timeArg.empty() ? QTime(0, 0) : QTime::fromString(timeArg.c_str());
+    if (!initTime.isValid()) {
+        qDebug() << "Invalid time format: " << timeArg.c_str() << ". Should be HH:mm." << Qt::flush;
+        return;
+    }
+    QDateTime initDateTime = QDateTime(initDate, initTime);
+    std::optional<sdtmaps::Journey> result = pathfind(transportSystem, start->id, end->id, initDateTime);
     if (!result.has_value()) {
-        qDebug() << "No journey found\n";
+        qDebug() << "No journey found.\n" << Qt::flush;
         return;
     }
     sdtmaps::Journey &journey = result.value();
     cout << journey << Qt::flush;
 }
 
+void handleFindCommand(const sdtmaps::TransportSystem &transportSystem, std::vector<std::string> &args) {
+    std::string substringArg;
+    CLI::App app{"find"};
+    app.add_option("substring", substringArg, "Substring to be searched among stops")->required();
+    try {
+        app.parse(std::vector(args.begin(), args.end() - 1));
+    } catch (const CLI::ParseError &e) {
+        std::cerr << e.what() << std::endl;
+        return;
+    }
+    substringArg = CLI::detail::remove_quotes(substringArg);
+
+    std::vector<const sdtmaps::Stop *> result = transportSystem.getStopsBySubstring(substringArg.c_str());
+    if (result.empty()) {
+        qDebug() << "No stops found.\n" << Qt::flush;
+        return;
+    }
+    cout << "\nFound " << result.size() << " stops.\n\n";
+    size_t maxNameLength = 4;
+    for (const sdtmaps::Stop *stop : result) {
+        if (maxNameLength < stop->name.size()) {
+            maxNameLength = stop->name.size();
+        }
+    }
+    size_t maxIdLength = 0;
+    for (const sdtmaps::Stop *stop : result) {
+        if (maxIdLength < stop->id.size()) {
+            maxIdLength = stop->id.size();
+        }
+    }
+    cout << "| ID" << std::string(maxIdLength, ' ').c_str() << " | NAME" << std::string(maxNameLength - 4, ' ').c_str() << " | ROUTE_COUNT |\n";
+    for (const sdtmaps::Stop *stop : result) {
+        cout << "| " << stop->id << std::string(maxIdLength - stop->id.length() + 2, ' ').c_str() << " | " <<
+            stop->name << std::string(maxNameLength - stop->name.length(), ' ').c_str() << " | " <<
+            stop->routeCount << std::string(11 - std::to_string(stop->routeCount).size(), ' ').c_str() << " |\n";
+    }
+    cout << "\n\n" << Qt::flush;
+}
+
 int main(int argc, char** argv) {
+    cout << QTime::fromString("06:00", "HH:mm").toString() << "\n" << Qt::flush;
+    cout << QDate::fromString("2011-01-01", "yyyy-MM-dd").toString() << "\n" << Qt::flush;
     QCoreApplication app(argc, argv);
     QCoreApplication::setApplicationName(PROGRAM_NAME);
     QCoreApplication::setApplicationVersion("1.0");
@@ -104,6 +167,7 @@ int main(int argc, char** argv) {
     const QStringList positionalArgs = parser.positionalArguments();
     if (positionalArgs.size() != 1) {
         std::cerr << "Expected 1 positional argument(s): dataset, but got " << positionalArgs.size() << std::endl;
+        std::cerr << "Try ./sdt-navigator help for help." << std::endl;
         return EXIT_FAILURE;
     }
     const QString &dataset = positionalArgs[0];
@@ -114,6 +178,7 @@ int main(int argc, char** argv) {
         transportSystem = sdtmaps::TransportSystem(QDir(QString(PROJECT_DATA_ROOT "/") + dataset));
     } catch (const std::exception &e) {
         std::cerr << e.what() << std::endl;
+        std::cerr << "Try ./sdt-navigator help for help." << std::endl;
         return EXIT_FAILURE;
     }
 
@@ -128,12 +193,14 @@ int main(int argc, char** argv) {
         std::ranges::reverse(args);
         if (commandName == "route") {
             handleRouteCommand(transportSystem, args);
-        } else if (commandName == "help") {
-            handleHelpCommand();
+        } else if (commandName == "find") {
+            handleFindCommand(transportSystem, args);
         } else if (commandName == "quit" || commandName == "exit") {
             break;
+        } else if (commandName == "help") {
+            handleHelpCommand();
         } else {
-            qDebug() << "Unknown command: " << commandName.c_str();
+            qDebug() << "Unknown command: " << commandName.c_str() << ". Type help for help." << Qt::flush;
         }
         cout << "[" + PROGRAM_NAME + "]$ " << Qt::flush;
     }
