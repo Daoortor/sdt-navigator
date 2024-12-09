@@ -7,3 +7,6 @@
 [submodule "lib/better-enums"]
 	path = lib/better-enums
 	url = https://github.com/aantron/better-enums
+[submodule "lib/CLI11"]
+	path = lib/CLI11
+	url = https://github.com/CLIUtils/CLI11
