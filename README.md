@@ -89,7 +89,7 @@ Tests are [automatically run by GitHub Actions](../../actions). To run them loca
 
 1. Prepare the data as shown above:
 	```bash
-	python scripts/convert.py
+	python3 scripts/convert.py
 	```
 
 2. Run the tests:
