@@ -70,10 +70,10 @@ def convert_trips(raw_data_path: str, data_path: str, data_date: date):
 
     print(f'Parsing stop times ({len(stop_times_csv.index)} rows)...')
 
-    routes: dict[str, dict[str, list[tuple[int, Stop]]]] = defaultdict(lambda: defaultdict(list))  # {route_id: {trip_id: [(stop_sequence, Stop)]}}
+    routes: dict[str, dict[str, list[Stop]]] = defaultdict(lambda: defaultdict(list))  # {route_id: {trip_id: [Stop]}}
 
-    # stop_times_csv.sort_values('stop_sequence', inplace=True)
-    # stop_times_csv.drop(columns='stop_sequence', inplace=True)
+    stop_times_csv.sort_values('stop_sequence', inplace=True)
+    stop_times_csv.drop(columns='stop_sequence')
 
     for row in stop_times_csv.itertuples(index=False):
         if row.stop_id not in stations_by_id:
@@ -89,25 +89,15 @@ def convert_trips(raw_data_path: str, data_path: str, data_date: date):
         arrival = arrival_days * 86400 + arrival_hours * 3600 + arrival_minutes * 60 + arrival_seconds
         departure = departure_days * 86400 + departure_hours * 3600 + departure_minutes * 60 + departure_seconds
 
-        # stops_for_trip[row.trip_id].append(
-        routes[route_id_by_trip_id[row.trip_id]][row.trip_id].append((
-            row.stop_sequence,
+        routes[route_id_by_trip_id[row.trip_id]][row.trip_id].append(
             Stop(
                 station=stations_by_id[row.stop_id],
                 time=StopTime(data_timestamp + arrival, data_timestamp + departure)
             )
-        ))
+        )
 
     del stations_by_id
     del stop_times_csv
-
-    print('Sorting and converting stop times...')
-    for trips in routes.values():
-        for stops in trips.values():
-            stops.sort(key=lambda stop_data: stop_data[0])  # Sorting by stop_sequence
-
-            for i, stop in enumerate(stops):  # Removing stop_sequence
-                stops[i] = stop[1]
 
     if DEBUG:
         print('Checking stop times...')  # Checking departure and arrival time consistency
@@ -177,6 +167,11 @@ def convert_trips(raw_data_path: str, data_path: str, data_date: date):
                     ]
                 )
             )
+
+    print(f'Sorting trips...')
+
+    for route in similar_trips:
+        route.trips.sort(key=lambda trip: trip[0].arrival_time)
 
     del route_data_by_id
     del route_similar_trips_dict

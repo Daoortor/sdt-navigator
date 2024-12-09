@@ -88,13 +88,11 @@ TEST_CASE("Paris") {
             paris, "1683", "1781", QDateTime(parisDate, QTime(6, 00)),
             {
                 {
-                    {JourneyElementType::RIDE, "1683", "1889"},
-                    {JourneyElementType::TRANSFER, "1889", "2053"},
-                    {JourneyElementType::RIDE, "2053", "1967"},
-                    {JourneyElementType::RIDE, "1967", "1996"},
-                    {JourneyElementType::RIDE, "1996", "1781"},
+                    {JourneyElementType::RIDE, "1683", "1764"},
+                    {JourneyElementType::RIDE, "1764", "1824"},
+                    {JourneyElementType::RIDE, "1824", "1781"},
                 },
-                QDateTime(parisDate, QTime(8, 39))
+                QDateTime(parisDate, QTime(6, 15))
             }
         ).check();
     }
