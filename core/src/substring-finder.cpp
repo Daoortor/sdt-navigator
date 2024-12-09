@@ -21,7 +21,7 @@ std::vector<QString> SuffixAutomaton::findAllStringsContaining(const QString &su
         if (!states[currentState].transitions.contains(c)) {
             return {}; // Substring not found
         }
-        currentState = states[currentState].transitions[c];
+        currentState = states[currentState].transitions.at(c);
     }
 
     // Perform DFS to collect all reachable strings
