@@ -75,11 +75,11 @@ Running the project consists of three steps:
 
 ## Telegram bot
 
-To run the Telegram bot, you need to create a `.token` file in the `telegram` folder and put your Telegram bot token there.
+To run the Telegram bot, you need to create a `.token` file in the [`scripts`](scripts) folder and put your Telegram bot token there.
 
 After that, you can run the bot:
 ```bash
-python3 telegram/bot.py
+python3 scripts/bot.py
 ```
 
 
