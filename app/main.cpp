@@ -129,7 +129,7 @@ void handleSearchCommand(const sdtmaps::TransportSystem &transportSystem, std::v
         qDebug() << "No stops found.\n" << Qt::flush;
         return;
     }
-    cout << "\nFound " << result.size() << " stops.\n\n";
+    cout << "\nFound " << result.size() << " stops:\n\n";
     size_t maxNameLength = 4;
     for (const sdtmaps::Stop *stop : result) {
         if (maxNameLength < stop->name.size()) {

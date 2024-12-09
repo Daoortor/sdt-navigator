@@ -35,7 +35,7 @@ def run_command(dataset: str, command: str) -> str:
         stdout, stderr = process.communicate(command, timeout=10)
         # print('Response received')
 
-        if process.returncode == 0:
+        if process.returncode == 0 and not stderr:
             result = stdout.split('[sdt-navigator]$')[1].strip()
         else:
             result = f'Error occurred: {stderr}'
@@ -50,6 +50,8 @@ def run_command(dataset: str, command: str) -> str:
 
 @bot.message_handler(commands=['start'])
 def start_message(message):
+    print(f'Incoming message: {message.text}')
+
     bot.send_message(
         message.chat.id,
         'Please select a dataset using /select command (e.g., `/select gtfs_hamburg`)',
@@ -59,6 +61,8 @@ def start_message(message):
 
 @bot.message_handler(commands=['select'])
 def select_dataset(message):
+    print(f'Incoming message: {message.text}')
+
     user_input = message.text.strip().removeprefix('/select').strip()
 
     if not user_input:
@@ -88,32 +92,43 @@ def select_dataset(message):
 
 @bot.message_handler(commands=['route'])
 def route_command(message):
+    print(f'Incoming message: {message.text}')
+
     if message.chat.id not in SELECTED_DATASET:
         return start_message(message)
 
     user_input = message.text.strip().removeprefix('/')
 
-    bot.send_message(
-        message.chat.id,
-        run_command(SELECTED_DATASET[message.chat.id], user_input)
-    )
+    result = run_command(SELECTED_DATASET[message.chat.id], user_input)
+
+    bot.send_message(message.chat.id, result)
 
 
 @bot.message_handler(commands=['search'])
 def search_command(message):
+    print(f'Incoming message: {message.text}')
+
     if message.chat.id not in SELECTED_DATASET:
         return start_message(message)
 
     user_input = message.text.strip().removeprefix('/')
 
-    bot.send_message(
-        message.chat.id,
-        run_command(SELECTED_DATASET[message.chat.id], user_input)
-    )
+    result = run_command(SELECTED_DATASET[message.chat.id], user_input)
+
+    if result[result.find('|'):].strip():
+        result = result[:result.find('|')] + '```\n' + result[result.find('|'):] + '\n```'
+    else:
+        result = f'No stations found'
+
+    print(f'Sending response:\n{result}')
+
+    bot.send_message(message.chat.id, result, parse_mode='Markdown')
 
 
 @bot.message_handler(func=lambda message: True)
 def handle_input(message):
+    print(f'Incoming message: {message.text}')
+
     bot.send_message(
         message.chat.id,
         'Please use commands: /select, /route, /search'
