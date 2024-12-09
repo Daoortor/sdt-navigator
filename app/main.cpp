@@ -27,7 +27,7 @@ COMMANDS
         Arguments:
             start-identifier         ID or full name of the start station.
             end-identifier           ID or full name of the end station.
-            date                     Departure date in yyyy-mm-dd format. Defaults to 1970-01-01.
+            date                     Departure date in yyyy-mm-dd format. Defaults to Julian day 0.
             time                     Departure time in h:mm format. Defaults to 0:00.
 
 
@@ -60,7 +60,7 @@ void handleRouteCommand(const sdtmaps::TransportSystem &transportSystem, std::ve
     try {
         app.parse(std::vector(args.begin(), args.end() - 1));
     } catch (const CLI::ParseError &e) {
-        std::cerr << e.what() << std::endl;
+        cerr << e.what() << "\n" << Qt::flush;
         return;
     }
     startArg = CLI::detail::remove_quotes(startArg);
@@ -120,7 +120,7 @@ void handleSearchCommand(const sdtmaps::TransportSystem &transportSystem, std::v
     try {
         app.parse(std::vector(args.begin(), args.end() - 1));
     } catch (const CLI::ParseError &e) {
-        std::cerr << e.what() << std::endl;
+        cerr << e.what() << "\n" << Qt::flush;
         return;
     }
     substringArg = CLI::detail::remove_quotes(substringArg);
@@ -165,8 +165,8 @@ int main(int argc, char** argv) {
 
     const QStringList positionalArgs = parser.positionalArguments();
     if (positionalArgs.size() != 1) {
-        std::cerr << "Expected 1 positional argument(s): dataset, but got " << positionalArgs.size() << std::endl;
-        std::cerr << "Try ./sdt-navigator help for help." << std::endl;
+        cerr << "Expected 1 positional argument(s): dataset, but got " << positionalArgs.size() << "\n" << Qt::flush;
+        cerr << "Try ./sdt-navigator --help for more information." << "\n" << Qt::flush;
         return EXIT_FAILURE;
     }
     const QString &dataset = positionalArgs[0];
@@ -176,8 +176,9 @@ int main(int argc, char** argv) {
     try {
         transportSystem = sdtmaps::TransportSystem(QDir(QString(PROJECT_DATA_ROOT "/") + dataset));
     } catch (const std::exception &e) {
-        std::cerr << e.what() << std::endl;
-        std::cerr << "Try ./sdt-navigator help for help." << std::endl;
+        cerr << e.what() << "\n" << Qt::flush;
+        cerr << "Maybe the dataset " << dataset << " doesn't exist or is corrupted." << "\n" << Qt::flush;
+        cerr << "Try ./sdt-navigator --help for more information." << "\n" << Qt::flush;
         return EXIT_FAILURE;
     }
 
@@ -199,7 +200,7 @@ int main(int argc, char** argv) {
         } else if (commandName == "help") {
             handleHelpCommand();
         } else {
-            cout << "Unknown command: " << commandName.c_str() << ". Type help for help." << Qt::flush;
+            cout << "Unknown command: " << commandName.c_str() << ". Type \"help\" for more information." << Qt::flush;
         }
         cout << "[" + PROGRAM_NAME + "]$ " << Qt::flush;
     }
