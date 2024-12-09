@@ -107,12 +107,12 @@ TEST_CASE("Pathfinder test") {
         REQUIRE(milan.isValid());
     }
     
-    // SUBCASE("Stockholm") {
-    //     TransportSystem stockholm(QDir(PROJECT_ROOT_PATH "/data/gtfs_stockholm"));
-    //     QDate stockholmDate(2020, 03, 24);
-    //
-    //     REQUIRE(stockholm.isValid());
-    // }
+    SUBCASE("Stockholm") {
+        TransportSystem stockholm(QDir(PROJECT_ROOT_PATH "/data/gtfs_stockholm"));
+        QDate stockholmDate(2020, 03, 24);
+
+        REQUIRE(stockholm.isValid());
+    }
 }
 
 TEST_CASE("Substring find test") {

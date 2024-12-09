@@ -145,8 +145,8 @@ TransportSystem::TransportSystem(const QDir &sourceDir) {
             stop.transfers = &*transfers.end();  // `transfers` has its size finalized
         }
         if (stop.routes == nullptr) {
-            throw runtime_error("Stop is not assigned to any route: " + stop.id.toStdString());
-            // stop.routes = &*stopRoutes.end();
+            // throw runtime_error("Stop is not assigned to any route: " + stop.id.toStdString());
+            stop.routes = &*stopRoutes.end();  // `stopRoutes` has its size finalized
         }
     }
     cout << "Building stops index..." << endl;
@@ -185,7 +185,7 @@ bool TransportSystem::isValid() const {
     });
     bool stopsAreValid = ranges::all_of(stops.begin(), stops.end(), [&](const Stop &stop) {
         return stop.transfers >= &*transfers.begin() && stop.transfers <= &*transfers.end() &&
-            stop.routes >= &*stopRoutes.begin() && stop.routes < &*stopRoutes.end();
+            stop.routes >= &*stopRoutes.begin() && stop.routes <= &*stopRoutes.end();
     });
     bool transfersAreValid = ranges::all_of(transfers.begin(), transfers.end(), [&](const Transfer &transfer) {
         return transfer.start >= &*stops.begin() && transfer.start < &*stops.end() &&
