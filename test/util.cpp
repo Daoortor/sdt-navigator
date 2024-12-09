@@ -55,4 +55,36 @@ void TestCase::check() const {
     }
 }
 
+QString generateString(size_t len) {
+    std::string result;
+    result.reserve(len);
+    for (size_t i = 0; i < len; ++i) {
+        result += 'a' + randomChar(rng);
+    }
+
+    return result.c_str();
+}
+
+
+std::vector<QString> generateStrings(size_t n, size_t len) {
+    std::vector<QString> result;
+    result.reserve(n);
+    for (size_t i = 0; i < n; i++) {
+        result.push_back(generateString(len));
+    }
+    return result;
+}
+
+std::vector<QString> naiveFindAllStringsContaining(const std::vector<QString> &strings, const QString &substring) {
+    std::vector<QString> result;
+    std::string stdSubstring = substring.toStdString();
+    for (auto &string : strings) {
+        if (string.toStdString().find(stdSubstring) != string.toStdString().npos) {
+            result.push_back(string);
+        }
+    }
+    std::ranges::sort(result);
+    return result;
+}
+
 }

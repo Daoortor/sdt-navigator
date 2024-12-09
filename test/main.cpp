@@ -77,6 +77,31 @@ TEST_CASE("Pathfinder test") {
                 }
             ).check();
         }
+
+        SUBCASE("Triangle inequality") {
+            const int N_TESTS = 10;
+
+            for (int i = 0; i < N_TESTS; i++) {
+                std::uniform_int_distribution<> randomStop(0, hamburg.stops.size() - 1);
+                const Stop *a = &hamburg.stops[randomStop(rng)];
+                const Stop *b = &hamburg.stops[randomStop(rng)];
+                const Stop *c = &hamburg.stops[randomStop(rng)];
+                std::optional<Journey> aTob_ = pathfind(hamburg, a->id, b->id, initDateTime);
+                if (!aTob_.has_value()) {
+                    continue;
+                }
+                Journey &aTob = aTob_.value();
+                std::optional<Journey> bToc_ = pathfind(hamburg, b->id, c->id, aTob.arrivalTime);
+                if (!bToc_.has_value()) {
+                    continue;
+                }
+                Journey &bToc = bToc_.value();
+                std::optional<Journey> aToc_ = pathfind(hamburg, a->id, c->id, initDateTime);
+                assert(aToc_.has_value());
+                Journey &aToc = aToc_.value();
+                assert(aToc.arrivalTime <= bToc.arrivalTime);
+            }
+        }
     }
 
     SUBCASE("Paris") {
@@ -137,6 +162,25 @@ TEST_CASE("Substring find test") {
 
         std::vector<QString> expected;
         assert(expected == result);
+    }
+
+    SUBCASE("Stress test") {
+        const int N_TESTS = 5;
+        const int N_STRINGS = 50;
+        const int N_SUBSTRINGS = 200;
+        const int STRING_LENGTH = 10;
+        const int SUBSTRING_LENGTH = 2;
+
+        for (int i = 0; i < N_TESTS; i++) {
+            std::vector strings = generateStrings(N_STRINGS, STRING_LENGTH);
+            SuffixAutomaton sa(strings);
+            for (int j = 0; j < N_SUBSTRINGS; j++) {
+                QString substring = generateString(SUBSTRING_LENGTH);
+                std::vector<QString> expected = naiveFindAllStringsContaining(strings, substring);
+                std::vector<QString> actual = sa.findAllStringsContaining(substring);
+                assert(expected == actual);
+            }
+        }
     }
 }
 

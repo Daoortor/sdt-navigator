@@ -70,7 +70,7 @@ std::optional<Journey> pathfind(const TransportSystem &transportSystem, const QS
                     dpEntry *currentStopOpt = &prevLayer[currentStopIndexInStops];
                     dpEntry *targetOpt = &prevLayer[targetIndex];
                     // Relax dp; target pruning - ignore routes after earliest known arrival time at target
-                    if (currentStopTime->arrivalTime < std::min(currentStopOpt->optimalTime, targetOpt->optimalTime)) {
+                    if (currentStopTime->arrivalTime < std::min(currentStopOpt->optimalTime, targetOpt->optimalTime) && boardedStop != currentStop) {
                         curLayer[currentStopIndexInStops] = {
                             currentStopTime->arrivalTime,
                             nullptr,

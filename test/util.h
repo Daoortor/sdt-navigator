@@ -6,8 +6,16 @@
 
 #include <string>
 #include <vector>
+#include <random>
 
 namespace sdtmaps::test {
+
+static std::random_device rd;
+static std::mt19937 rng{rd()};
+static std::uniform_int_distribution randomChar(0, 51);
+
+static QDateTime initDateTime = QDateTime(QDate::fromJulianDay(0), QTime(0, 0));
+
 
 BETTER_ENUM(JourneyElementType, int, RIDE, TRANSFER);
 
@@ -44,6 +52,12 @@ struct TestCase {
 
     void check() const;
 };
+
+QString generateString(size_t len);
+
+std::vector<QString> generateStrings(size_t n, size_t len);
+
+std::vector<QString> naiveFindAllStringsContaining(const std::vector<QString> &strings, const QString &substring);
 
 }
 
