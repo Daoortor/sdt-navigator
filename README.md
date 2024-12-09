@@ -4,6 +4,9 @@
 </h6>
 
 
+#### Demo: [@SDT_Navigator_bot](https://t.me/SDT_Navigator_bot)
+
+
 ## Setup
 
 This project is developed in C++ and Python and has been primarily tested on Linux. For optimal compatibility and performance, we recommend using a Linux environment. The following instructions are specifically tailored for Linux systems:
@@ -56,21 +59,21 @@ Running the project consists of three steps:
 	Loading transport system from directory "gtfs_hamburg"...
 	Transport system loaded
 
-	[SDT Navigator]$ route --start "Bremen Hbf" --end "Hamburg Airport (Flughafen)" --date 2024-03-20 --time 6:00
+	[SDT Navigator]$ route --start "Bremen Hbf" --end "Hamburg Airport (Flughafen)" --date 2020-03-20 --time 06:00
 	Journey from Bremen Hbf to Hamburg Airport (Flughafen)
-	Fri Mar 20 00:15:00 2020 - Fri Mar 20 04:09:00 2020
+	Fri Mar 20 06:26:00 2020 - Fri Mar 20 08:09:00 2020
 
-	RAIL RB41
-	Bremen Hbf -> Hamburg Hbf
-	Fri Mar 20 00:15:00 2020 - Fri Mar 20 01:44:00 2020
+	RAIL RE4
+	Bremen Hbf -> Hamburg-Harburg
+	Fri Mar 20 06:26:00 2020 — Fri Mar 20 07:29:00 2020
 
-	RAIL S1
-	Hamburg Hbf -> Sülldorf
-	Fri Mar 20 02:38:00 2020 - Fri Mar 20 03:11:00 2020
+	RAIL RE3
+	Hamburg-Harburg -> Hamburg Hbf
+	Fri Mar 20 07:31:00 2020 — Fri Mar 20 07:41:00 2020
 
-	RAIL S1
-	Sülldorf -> Hamburg Airport (Flughafen)
-	Fri Mar 20 03:11:00 2020 - Fri Mar 20 04:09:00 2020
+	SUBURBANRAILWAY S1
+	Hamburg Hbf -> Hamburg Airport (Flughafen)
+	Fri Mar 20 07:44:00 2020 — Fri Mar 20 08:09:00 2020
 	```
 
 ## Telegram bot
