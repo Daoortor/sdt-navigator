@@ -18,13 +18,13 @@ public:
 
     SuffixAutomaton() = default;
     explicit SuffixAutomaton(const std::vector<QString> &strings);
-    std::vector<QString> findAllStringsContaining(const QString &substring) const;
+    [[nodiscard]] std::vector<QString> findAllStringsContaining(const QString &substring) const;
 
 private:
     std::vector<State> states; // All states in the automaton
     int lastState = 0;         // Last active state
 
-    void initialState();
+    void makeInitialState();
     void addString(const QString &str);
     void addCharacter(char c);
 };

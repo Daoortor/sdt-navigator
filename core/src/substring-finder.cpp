@@ -8,23 +8,23 @@
 namespace sdtmaps {
 
 SuffixAutomaton::SuffixAutomaton(const std::vector<QString> &strings) {
-    initialState();
+    makeInitialState();
     for (const auto &str : strings) {
         addString(str);
     }
 }
 
 std::vector<QString> SuffixAutomaton::findAllStringsContaining(const QString &substring) const {
-    // Traverse the automaton to locate the substring
+    // Feed substring into the automaton
     int currentState = 0;
     for (char c : substring.toStdString()) {
         if (!states[currentState].transitions.contains(c)) {
-            return {}; // Substring not found
+            return {}; // Substring not accepted
         }
         currentState = states[currentState].transitions.at(c);
     }
 
-    // Perform DFS to collect all reachable strings
+    // Perform BFS to collect all reachable strings
     std::set<int> visited;
     std::vector<QString> result;
     std::vector<int> stack;
@@ -33,10 +33,10 @@ std::vector<QString> SuffixAutomaton::findAllStringsContaining(const QString &su
     while (!stack.empty()) {
         int state = stack.back();
         stack.pop_back();
-
-        if (visited.count(state)) continue;
+        if (visited.contains(state)) {
+            continue;
+        }
         visited.insert(state);
-
         // Collect strings from this state
         result.insert(result.end(), states[state].ends.begin(), states[state].ends.end());
 
@@ -53,7 +53,8 @@ std::vector<QString> SuffixAutomaton::findAllStringsContaining(const QString &su
     return result;
 }
 
-void SuffixAutomaton::initialState() {
+void SuffixAutomaton::makeInitialState() {
+    states.clear();
     states.emplace_back(); // Create the initial state
 }
 
