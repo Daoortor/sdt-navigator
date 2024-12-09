@@ -9,6 +9,7 @@
 
 QTextStream cout(stdout, QIODevice::WriteOnly);
 QTextStream cin(stdin, QIODevice::ReadOnly);
+QTextStream cerr(stderr, QIODevice::WriteOnly);
 
 const QString PROGRAM_NAME = "sdt-navigator";
 const QString CLI_HELP_MESSAGE = R"(
@@ -74,7 +75,7 @@ void handleRouteCommand(const sdtmaps::TransportSystem &transportSystem, std::ve
     if (!start) {
         std::vector <const sdtmaps::Stop *> searchResult = transportSystem.getStopsBySubstring(startArg.c_str());
         if (searchResult.empty()) {
-            qDebug() << "Start station '" << startArg.c_str() << "' not found\n" << Qt::flush;
+            cerr << "Start station '" << startArg.c_str() << "' not found\n" << Qt::flush;
             return;
         }
         start = searchResult[0];
@@ -86,7 +87,7 @@ void handleRouteCommand(const sdtmaps::TransportSystem &transportSystem, std::ve
     if (!end) {
         std::vector <const sdtmaps::Stop *> searchResult = transportSystem.getStopsBySubstring(endArg.c_str());
         if (searchResult.empty()) {
-            qDebug() << "Destination station '" << endArg.c_str() << "' not found\n" << Qt::flush;
+            cerr << "Destination station '" << endArg.c_str() << "' not found\n" << Qt::flush;
             return;
         }
         end = searchResult[0];
@@ -94,18 +95,18 @@ void handleRouteCommand(const sdtmaps::TransportSystem &transportSystem, std::ve
 
     QDate initDate = dateArg.empty() ? QDate::fromJulianDay(0) : QDate::fromString(dateArg.c_str(), "yyyy-MM-dd");
     if (!initDate.isValid()) {
-        qDebug() << "Invalid date format: " << dateArg.c_str() << ". Should be yyyy-MM-dd." << Qt::flush;
+        cerr << "Invalid date format: " << dateArg.c_str() << ". Should be yyyy-MM-dd." << Qt::flush;
         return;
     }
     QTime initTime = timeArg.empty() ? QTime(0, 0) : QTime::fromString(timeArg.c_str());
     if (!initTime.isValid()) {
-        qDebug() << "Invalid time format: " << timeArg.c_str() << ". Should be HH:mm." << Qt::flush;
+        cerr << "Invalid time format: " << timeArg.c_str() << ". Should be HH:mm." << Qt::flush;
         return;
     }
     QDateTime initDateTime = QDateTime(initDate, initTime);
     std::optional<sdtmaps::Journey> result = pathfind(transportSystem, start->id, end->id, initDateTime);
     if (!result.has_value()) {
-        qDebug() << "No journey found.\n" << Qt::flush;
+        cerr << "No journey found.\n" << Qt::flush;
         return;
     }
     sdtmaps::Journey &journey = result.value();
@@ -126,7 +127,7 @@ void handleSearchCommand(const sdtmaps::TransportSystem &transportSystem, std::v
 
     std::vector<const sdtmaps::Stop *> result = transportSystem.getStopsBySubstring(substringArg.c_str());
     if (result.empty()) {
-        qDebug() << "No stops found.\n" << Qt::flush;
+        cout << "No stops found.\n" << Qt::flush;
         return;
     }
     cout << "\nFound " << result.size() << " stops:\n\n";
@@ -198,7 +199,7 @@ int main(int argc, char** argv) {
         } else if (commandName == "help") {
             handleHelpCommand();
         } else {
-            qDebug() << "Unknown command: " << commandName.c_str() << ". Type help for help." << Qt::flush;
+            cout << "Unknown command: " << commandName.c_str() << ". Type help for help." << Qt::flush;
         }
         cout << "[" + PROGRAM_NAME + "]$ " << Qt::flush;
     }
