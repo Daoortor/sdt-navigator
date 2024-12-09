@@ -42,7 +42,6 @@ TransportSystem::TransportSystem(const QDir &sourceDir) {
     auto jsonTransfers = details::parseJsonFile(sourceDir.filePath("transfers.json"));
     auto jsonTrips = details::parseJsonFile(sourceDir.filePath("trips.json"));
 
-    map<QString, Stop *> stopById;
     stops.reserve(jsonStations.Size());
     cout << "Loading stops (" << jsonStations.Size() << ")..." << endl;
     for (auto &stopData : jsonStations.GetArray()) {
@@ -54,6 +53,7 @@ TransportSystem::TransportSystem(const QDir &sourceDir) {
             0
         );
         stopById[stops.back().id] = &stops.back();  // `stops` has its size finalized
+        stopByName[stops.back().name] = &stops.back();
     }
     cout << "Stops loaded" << endl;
     
@@ -176,21 +176,13 @@ bool TransportSystem::isValid() const {
 }
 
 const Stop *TransportSystem::getStopById(const QString &stopId) const {
-    for (auto &stop : stops) {
-        if (stop.id == stopId) {
-            return &stop;
-        }
-    }
-    return nullptr;
+    auto it = stopById.find(stopId);
+    return it == stopById.end() ? nullptr : it->second;
 }
 
 const Stop *TransportSystem::getStopByName(const QString &stopName) const {
-    for (auto &stop : stops) {
-        if (stop.name == stopName) {
-            return &stop;
-        }
-    }
-    return nullptr;
+    auto it = stopByName.find(stopName);
+    return it == stopByName.end() ? nullptr : it->second;
 }
 
 QDate TransportSystem::getStartDate() const {
