@@ -184,14 +184,4 @@ const Stop *TransportSystem::getStopByName(const QString &stopName) const {
     auto it = stopByName.find(stopName);
     return it == stopByName.end() ? nullptr : it->second;
 }
-
-QDate TransportSystem::getStartDate() const {
-    if (stopTimes.empty()) {
-        return {};
-    }
-    return stopTimes[0].arrivalTime.toQDateTime().date();
-}
-
-
-
 }

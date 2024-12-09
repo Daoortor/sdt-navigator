@@ -10,6 +10,38 @@
 QTextStream cout(stdout, QIODevice::WriteOnly);
 QTextStream cin(stdin, QIODevice::ReadOnly);
 
+const QString PROGRAM_NAME = "sdt-navigator";
+const QString CLI_HELP_MESSAGE = R"(
+*********************************SDT-NAVIGATOR**********************************
+
+COMMANDS
+    route --start <start-identifier> --end <end-identifier> [--date <date>] [--time <time>]
+
+        Outputs the fastest (by arrival time) journey in the given dataset from <start-identifier> to <end-identifier>, departing on <date> at <time>.
+
+        Arguments:
+            start-identifier         ID or full name of the start station.
+            end-identifier           ID or full name of the end station.
+            date                     Departure date in yyyy-mm-dd format. Defaults to 1970-01-01.
+            time                     Departure time in h:mm format. Defaults to 0:00.
+
+
+    help
+
+        Outputs this message.
+
+
+    exit, quit
+
+        Exits the interpreter.
+
+********************************************************************************
+)";
+
+void handleHelpCommand() {
+    cout << CLI_HELP_MESSAGE << Qt::flush;
+}
+
 void handleRouteCommand(const sdtmaps::TransportSystem &transportSystem, std::vector<std::string> &args) {
     std::string startArg;
     std::string endArg;
@@ -47,7 +79,7 @@ void handleRouteCommand(const sdtmaps::TransportSystem &transportSystem, std::ve
         qDebug() << "End station '" << endArg.c_str() << "' not found\n";
         return;
     }
-    QDate initDate = dateArg.empty() ? transportSystem.getStartDate() : QDate::fromString(dateArg.c_str(), "yyyy-mm-dd");
+    QDate initDate = dateArg.empty() ? QDate::fromJulianDay(0) : QDate::fromString(dateArg.c_str(), "yyyy-mm-dd");
     QTime initTime = timeArg.empty() ? QTime(0, 0) : QTime::fromString(dateArg.c_str(), "h:mm");
     std::optional<sdtmaps::Journey> result = pathfind(transportSystem, start->id, end->id, QDateTime(initDate, initTime));
     if (!result.has_value()) {
@@ -60,12 +92,13 @@ void handleRouteCommand(const sdtmaps::TransportSystem &transportSystem, std::ve
 
 int main(int argc, char** argv) {
     QCoreApplication app(argc, argv);
-    QCoreApplication::setApplicationName("SDT Navigator");
+    QCoreApplication::setApplicationName(PROGRAM_NAME);
     QCoreApplication::setApplicationVersion("1.0");
     QCommandLineParser parser;
     parser.addVersionOption();
     parser.addPositionalArgument("dataset",
         "The name of the dataset to load transport data from. Datasets are stored in the " PROJECT_DATA_ROOT_RELATIVE_PATH " directory. Example: 'gtfs_hamburg'.");
+    parser.addHelpOption();
     parser.process(app);
 
     const QStringList positionalArgs = parser.positionalArguments();
@@ -85,7 +118,7 @@ int main(int argc, char** argv) {
     }
 
     std::string input;
-    cout << "\n[" + QCoreApplication::applicationName() + "]$ " << Qt::flush;
+    cout << "\n[" + PROGRAM_NAME + "]$ " << Qt::flush;
     while (std::getline(std::cin, input)) {
         std::vector<std::string> args = CLI::detail::split_up(input);
         if (args.empty()) {
@@ -95,9 +128,15 @@ int main(int argc, char** argv) {
         std::ranges::reverse(args);
         if (commandName == "route") {
             handleRouteCommand(transportSystem, args);
+        } else if (commandName == "help") {
+            handleHelpCommand();
+        } else if (commandName == "quit" || commandName == "exit") {
+            break;
         } else {
             qDebug() << "Unknown command: " << commandName.c_str();
         }
-        cout << "[" + QCoreApplication::applicationName() + "]$ " << Qt::flush;
+        cout << "[" + PROGRAM_NAME + "]$ " << Qt::flush;
     }
+
+    return EXIT_SUCCESS;
 }

@@ -27,7 +27,6 @@ struct TransportSystem {
     [[nodiscard]] const Stop *getStopByName(const QString &stopName) const;
     // Find stops by substring (to be optimized w/search structures)
     [[nodiscard]] std::vector<Stop *> getStopsBySubstring(const QString &substring) const;
-    [[nodiscard]] QDate getStartDate() const;
 };
 
 }
